@@ -2,7 +2,7 @@
 	$host = "127.0.0.1";
 	$user = "user_id";
 	$pw = "user_pw";
-	$db_name = "finding_dog";
+	$db_name = "db";
 	
 	$conn = mysqli_connect($host, $user, $pw, $db_name);
 	
