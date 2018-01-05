@@ -1,7 +1,7 @@
 <?php
 	$host = "127.0.0.1";
-	$user = "chojpsh1";
-	$pw = "gkwjd7911";
+	$user = "user_id";
+	$pw = "user_pw";
 	$db_name = "finding_dog";
 	
 	$conn = mysqli_connect($host, $user, $pw, $db_name);
