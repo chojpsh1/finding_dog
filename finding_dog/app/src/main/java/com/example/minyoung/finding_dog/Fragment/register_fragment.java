@@ -73,8 +73,14 @@ public class register_fragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 데이터베이스 Instance 생성
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseDatabaseRef = firebaseDatabase.getReference();
+        
+        // 스토리지 Instance 생성
+        firebaseStorage = FirebaseStorage.getInstance();
+        firebaseStorageRef = firebaseStorage.getReference();
     }
 
     @Override
