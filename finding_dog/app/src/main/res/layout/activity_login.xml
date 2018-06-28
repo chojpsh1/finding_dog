@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context="com.example.minyoung.finding_dog.LoginActivity">
+    tools:context="com.example.minyoung.finding_dog.LoginActivity"
+    android:layout_margin="24dp">
     <ImageView
         android:src="@drawable/puppy"
         android:layout_width="120dp"
