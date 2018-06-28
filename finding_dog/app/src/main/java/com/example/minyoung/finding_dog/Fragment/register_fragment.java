@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,25 +30,28 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
+import static junit.framework.Assert.assertEquals;
 
 /**
  * Created by minyoung on 2018-06-28.
  */
 
 public class register_fragment extends Fragment {
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    private String mParam1;
-    private String mParam2;
     Context mContext;
     EditText editTextSpecies;
     EditText editTextLocation;
@@ -66,24 +70,11 @@ public class register_fragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static register_fragment newInstance(String param1, String param2) {
-        register_fragment fragment = new register_fragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseDatabaseRef = firebaseDatabase.getReference();
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -101,19 +92,12 @@ public class register_fragment extends Fragment {
         buttonChoose = view.findViewById(R.id.buttonChoose);
         buttonUpload = view.findViewById(R.id.buttonUpload);
 
+        imageViewUpload = view.findViewById(R.id.imageViewUpload);
         //Button 클릭 기능 생성
         buttonSaveDog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String species = editTextSpecies.getText().toString();
-                String location = editTextLocation.getText().toString();
-                String feature = editTextFeature.getText().toString();
-                Dog dog = new Dog(species, location, feature);
-                firebaseDatabaseRef.child("UID").setValue(dog);
-                Toast.makeText(mContext,"저장 완료",Toast.LENGTH_LONG).show();
-                editTextSpecies.setText("");
-                editTextLocation.setText("");
-                editTextFeature.setText("");
+                saveDog();
             }
         });
         buttonChoose.setOnClickListener(new View.OnClickListener() {
@@ -134,6 +118,28 @@ public class register_fragment extends Fragment {
         });
         return view;
     }
+
+    private void saveDog() {
+        // Create new post at /user-posts/$userid/$postid and at
+        // /posts/$postid simultaneously
+
+
+        String species = editTextSpecies.getText().toString();
+        String location = editTextLocation.getText().toString();
+        String feature = editTextFeature.getText().toString();
+        Dog dog = new Dog(species, location, feature);
+        Map<String, Object> postValues = dog.toMap();
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/UID/", postValues);
+        firebaseDatabaseRef.updateChildren(childUpdates);
+
+        Toast.makeText(mContext,"저장 완료",Toast.LENGTH_LONG).show();
+        editTextSpecies.setText("");
+        editTextLocation.setText("");
+        editTextFeature.setText("");
+    }
+
     //결과 처리
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -141,7 +147,6 @@ public class register_fragment extends Fragment {
         //request코드가 0이고 OK를 선택했고 data에 뭔가가 들어 있다면
         if(requestCode == 0 && resultCode == RESULT_OK){
             filePath = data.getData();
-            Log.d("MainActivity", "uri:" + String.valueOf(filePath));
             try {
                 //Uri 파일을 Bitmap으로 만들어서 ImageView에 집어 넣는다.
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), filePath);
@@ -166,10 +171,10 @@ public class register_fragment extends Fragment {
             Date now = new Date();
             String filename = formatter.format(now) + ".jpg";
             //storage 주소와 폴더 파일명을 지정해 준다.
-            firebaseStorageRef = firebaseStorage.getReferenceFromUrl("gs://lg01-ba3b9.appspot.com").child(filename);
+            StorageReference storageRef = firebaseStorage.getReferenceFromUrl("gs://chatting-ed067.appspot.com").child(filename);
 
             //올라가거라...
-            firebaseStorageRef.putFile(filePath)
+            storageRef.putFile(filePath)
                     //성공시
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -200,6 +205,4 @@ public class register_fragment extends Fragment {
             Toast.makeText(mContext, "파일을 먼저 선택하세요.", Toast.LENGTH_SHORT).show();
         }
     }
-
-
 }
