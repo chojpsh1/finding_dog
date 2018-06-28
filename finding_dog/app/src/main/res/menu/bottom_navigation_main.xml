@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/pet_register"
+        android:icon="@drawable/pet"
+        android:title="반려견등록"/>
+    <item
+        android:id="@+id/search"
+        android:icon="@drawable/search"
+        android:title="유기견찾기"/>
+    <item
+        android:id="@+id/chatting"
+        android:icon="@drawable/chat"
+        android:title="채팅"/>
+    <item
+        android:id="@+id/shop"
+        android:icon="@drawable/shop"
+        android:title="상점"/>
+    <item
+        android:id="@+id/setting"
+        android:icon="@drawable/setting"
+        android:title="설정"/>
+</menu>
