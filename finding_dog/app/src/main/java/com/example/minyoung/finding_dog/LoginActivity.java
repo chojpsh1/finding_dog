@@ -29,20 +29,18 @@ public class LoginActivity extends AppCompatActivity {
         singup =(Button)findViewById(R.id.loginActivity_button_signup);
         login.setBackgroundColor(Color.parseColor(splash_background));
         singup.setBackgroundColor(Color.parseColor(splash_background));
+        login.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                finish();
+            }
+        });
         singup.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 startActivity(new Intent(LoginActivity.this,SignupActivity.class));
             }
         });
-        login.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                startActivity(new Intent(LoginActivity.this,MainActivity.class));
-            }
-        });
-
     }
-
-
 }
