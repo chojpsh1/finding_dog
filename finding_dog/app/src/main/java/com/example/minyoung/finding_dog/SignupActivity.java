@@ -21,6 +21,7 @@ public class SignupActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseUser currentUser;
     Context mContext;
     private EditText editTextEmail;
     private EditText editTextName;
@@ -33,6 +34,8 @@ public class SignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
         mContext = this;
 
+        currentUser = mAuth.getCurrentUser();
+
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextName = findViewById(R.id.editTextName);
         editTextPassword = findViewById(R.id.editTextPassword);
@@ -41,10 +44,10 @@ public class SignupActivity extends AppCompatActivity {
         buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createAccount(editTextEmail.getText().toString(), editTextPassword.getText().toString());
+                createUser(editTextEmail.getText().toString(), editTextPassword.getText().toString());
             }
         });
-        
+/*
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -59,24 +62,28 @@ public class SignupActivity extends AppCompatActivity {
                 }
             }
         };
+*/
     }
 
-    private void createAccount(String email, String password) {
+    private void createUser(String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener() {
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onComplete(@NonNull Task task) {
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(mContext, "Authentication failed",
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Toast.makeText(mContext, "Authentication successed.",
                                     Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Toast.makeText(mContext, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            //updateUI(null);
                         }
+
+                        // ...
                     }
                 });
-        // [END create_user_with_email]
     }
 }
