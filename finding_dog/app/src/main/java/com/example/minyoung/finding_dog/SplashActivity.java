@@ -49,7 +49,6 @@ public class SplashActivity extends AppCompatActivity {
 //                        displayMessage();
 //                    }
 //                });
-
     }
 
     private void startLoading() {
@@ -76,7 +75,6 @@ public class SplashActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     finish();
-
                 }
             });
             builder.create().show();

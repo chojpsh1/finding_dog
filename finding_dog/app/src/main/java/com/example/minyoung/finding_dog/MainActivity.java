@@ -1,4 +1,5 @@
 package com.example.minyoung.finding_dog;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -24,7 +25,8 @@ public class MainActivity extends AppCompatActivity{
             public boolean onNavigationItemSelected(@Nullable MenuItem item){
                 switch (item.getItemId()) {
                     case R.id.pet_register:
-                        getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,new register_fragment()).commit();
+//                        getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,new register_fragment()).commit();
+                        startActivity(new Intent(MainActivity.this, SignupActivity.class));
                         break;
                     case R.id.search:
                         getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,new search_fragment()).commit();
