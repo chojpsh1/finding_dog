@@ -20,8 +20,11 @@ import android.widget.Toast;
 import com.example.minyoung.finding_dog.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -30,9 +33,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
+import static com.facebook.FacebookSdk.getApplicationContext;
 import static junit.framework.Assert.assertEquals;
 
 /**
@@ -53,6 +58,7 @@ public class register_fragment extends Fragment {
     DatabaseReference firebaseDatabaseRef;
     FirebaseStorage firebaseStorage;
     StorageReference firebaseStorageRef;
+    String current_uid;
 
     public register_fragment(){
         // Required empty public constructor
@@ -114,25 +120,61 @@ public class register_fragment extends Fragment {
     }
 
     private void saveDog() {
-        // editText의 내용을 읽어옴
-        String species = editTextSpecies.getText().toString();
-        String location = editTextLocation.getText().toString();
-        String feature = editTextFeature.getText().toString();
+       //현재 사용자를 불러옴
+        DatabaseReference database2 = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mConditionRef2=database2.child("Current_user");
+        mConditionRef2.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Iterator<DataSnapshot> child = dataSnapshot.getChildren().iterator();
+                DataSnapshot temp=child.next();
+                String key=temp.getKey();
+                current_uid=key;
 
-        // Dog 클래스 객체생성
-        Dog dog = new Dog(species, location, feature);
-        Map<String, Object> postValues = dog.toMap();
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
 
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/UID/", postValues);
-        firebaseDatabaseRef.updateChildren(childUpdates);
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mConditionRef=database.child("User");
+        mConditionRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int a=0;
+                Iterator<DataSnapshot> child = dataSnapshot.getChildren().iterator();
 
-        Toast.makeText(mContext,"저장 완료",Toast.LENGTH_LONG).show();
+                while(child.hasNext()) {
+                    DataSnapshot temp=child.next();
+                    String key=temp.getKey();
+                    Toast.makeText(mContext,current_uid,Toast.LENGTH_LONG).show();
+                    if(key.equals(current_uid)){
+                        // editText의 내용을 읽어옴
+                        String species = editTextSpecies.getText().toString();
+                        String location = editTextLocation.getText().toString();
+                        String feature = editTextFeature.getText().toString();
+                        // Dog 클래스 객체생성
+                        Dog dog = new Dog(species, location, feature);
+                        Map<String, Object> postValues = dog.toMap();
+                        Toast.makeText(mContext,"객체 생성",Toast.LENGTH_LONG).show();
+                        Map<String, Object> childUpdates = new HashMap<>();
+                        childUpdates.put("/User/"+current_uid, postValues);
+                        firebaseDatabaseRef.updateChildren(childUpdates);
 
-        // 저장한 후 editText 초기화
-        editTextSpecies.setText("");
-        editTextLocation.setText("");
-        editTextFeature.setText("");
+                        Toast.makeText(mContext,"저장 완료",Toast.LENGTH_LONG).show();
+
+                        // 저장한 후 editText 초기화
+                        editTextSpecies.setText("");
+                        editTextLocation.setText("");
+                        editTextFeature.setText("");
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
     //결과 처리

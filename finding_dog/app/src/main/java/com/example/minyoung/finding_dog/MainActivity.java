@@ -19,6 +19,10 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        Intent intent = getIntent();
+//        String uid = intent.getExtras().getString("uid");
+
         BottomNavigationView bottomNavigationView=(BottomNavigationView)findViewById(R.id.mainactivity_bottomnavigationview);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener(){
             @Override

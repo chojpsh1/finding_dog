@@ -14,17 +14,23 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class SignupActivity extends AppCompatActivity{
     final String TAG = "SignupActivity";
-
+    String user_email[];
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-
+    private DatabaseReference databaseReference;
     Context mContext;
     private EditText editTextEmail;
     private EditText editTextName;
     private EditText editTextPassword;
     private Button buttonSignUp;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +54,7 @@ public class SignupActivity extends AppCompatActivity{
         });
     }
 
-    public void createUser(String email, String password) {
+    public void createUser(final String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -57,6 +63,9 @@ public class SignupActivity extends AppCompatActivity{
                             // Sign in success, update UI with the signed-in user's information
                             Toast.makeText(mContext, "Authentication successed.",
                                     Toast.LENGTH_SHORT).show();
+                            user_email=email.split("@");
+                            databaseReference = FirebaseDatabase.getInstance().getReference("User");
+                            databaseReference.child(user_email[0]).child("uid").setValue(email);
                             finish();
                         } else {
                             // If sign in fails, display a message to the user.
