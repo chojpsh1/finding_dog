@@ -2,68 +2,105 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="28dp"
     android:orientation="vertical">
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="강아지 종 : "
-        android:id="@+id/textViewSpecies"/>
-    <EditText
+        android:text="반려견 등록"
+        android:textSize="48dp"
+        android:layout_gravity="center"
+        />
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="비글"
-        android:id="@+id/editTextSpecies"/>
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="강아지 종 :"
+            android:gravity="center"
+            android:id="@+id/textViewSpecies"
+            android:layout_weight="1"/>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="비글"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:id="@+id/editTextSpecies"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="사는 지역 : "
-        android:id="@+id/textViewLocation"/>
-    <EditText
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="사는 지역 :"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:id="@+id/textViewLocation"/>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="대전"
+            android:gravity="center"
+            android:layout_weight="3"
+            android:id="@+id/editTextLocation"/>
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="대전"
-        android:id="@+id/editTextLocation"/>
+        android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="강아지 특징 : "
-        android:id="@+id/textViewFeature"/>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="귀에 점 두개"
-        android:id="@+id/editTextFeature"/>
-
-    <Button
-        android:id="@+id/buttonSaveDog"
-        android:layout_width="371dp"
-        android:layout_height="wrap_content"
-        android:text="SaveEndDevice" />
+        <TextView
+            android:id="@+id/textViewFeature"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:text="강아지 특징 : " />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="귀에 점 두개"
+            android:layout_weight="1"
+            android:id="@+id/editTextFeature"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/buttonChoose"
-            android:text="choose" />
+        android:orientation="vertical"
+        android:layout_gravity="center">
 
         <Button
+            android:id="@+id/buttonSaveDog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="강아지 정보 저장" />
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/buttonUpload"
-            android:text="upload"/>
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/buttonChoose"
+                android:text="강아지 사진 선택" />
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonUpload"
+                android:text="강아지 사진 저장"/>
+        </LinearLayout>
+    </LinearLayout>
 
-        <ImageView
+    <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/imageViewUpload"/>
-    </LinearLayout>
+            android:id="@+id/imageViewUpload"
+            android:background="@drawable/noimage"/>
 
 </LinearLayout>

@@ -5,17 +5,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,21 +17,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.example.minyoung.finding_dog.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -77,7 +65,7 @@ public class register_fragment extends Fragment {
         // 데이터베이스 Instance 생성
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseDatabaseRef = firebaseDatabase.getReference();
-        
+
         // 스토리지 Instance 생성
         firebaseStorage = FirebaseStorage.getInstance();
         firebaseStorageRef = firebaseStorage.getReference();
@@ -177,7 +165,7 @@ public class register_fragment extends Fragment {
             Date now = new Date();
             String filename = formatter.format(now) + ".jpg";
             //storage 주소와 폴더 파일명을 지정해 준다.
-            StorageReference storageRef = firebaseStorage.getReferenceFromUrl("gs://chatting-ed067.appspot.com").child(filename);
+            StorageReference storageRef = firebaseStorage.getReferenceFromUrl("gs://chatting-ed067.appspot.com").child("UID").child(filename);
 
             //올라가거라...
             storageRef.putFile(filePath)
@@ -186,7 +174,7 @@ public class register_fragment extends Fragment {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             progressDialog.dismiss(); //업로드 진행 Dialog 상자 닫기
-                            Toast.makeText(mContext, "업로드 완료!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "업로드 완료!", Toast.LENGTH_LONG).show();
                         }
                     })
                     //실패시
@@ -194,21 +182,21 @@ public class register_fragment extends Fragment {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
-                            Toast.makeText(mContext, "업로드 실패!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "업로드 실패!", Toast.LENGTH_LONG).show();
                         }
                     })
                     //진행중
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            @SuppressWarnings("VisibleForTests") //이걸 넣어 줘야 아랫줄에 에러가 사라진다. 넌 누구냐?
+                            @SuppressWarnings("VisibleForTests")
                                     double progress = (100 * taskSnapshot.getBytesTransferred()) /  taskSnapshot.getTotalByteCount();
                             //dialog에 진행률을 퍼센트로 출력해 준다
                             progressDialog.setMessage("Uploaded " + ((int) progress) + "% ...");
                         }
                     });
         } else {
-            Toast.makeText(mContext, "파일을 먼저 선택하세요.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "파일을 먼저 선택하세요.", Toast.LENGTH_LONG).show();
         }
     }
 }
