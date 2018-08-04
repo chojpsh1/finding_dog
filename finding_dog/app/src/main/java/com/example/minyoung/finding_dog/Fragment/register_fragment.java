@@ -114,13 +114,12 @@ public class register_fragment extends Fragment {
     }
 
     private void saveDog() {
-        // Create new post at /user-posts/$userid/$postid and at
-        // /posts/$postid simultaneously
-
-
+        // editText의 내용을 읽어옴
         String species = editTextSpecies.getText().toString();
         String location = editTextLocation.getText().toString();
         String feature = editTextFeature.getText().toString();
+
+        // Dog 클래스 객체생성
         Dog dog = new Dog(species, location, feature);
         Map<String, Object> postValues = dog.toMap();
 
@@ -129,6 +128,8 @@ public class register_fragment extends Fragment {
         firebaseDatabaseRef.updateChildren(childUpdates);
 
         Toast.makeText(mContext,"저장 완료",Toast.LENGTH_LONG).show();
+
+        // 저장한 후 editText 초기화
         editTextSpecies.setText("");
         editTextLocation.setText("");
         editTextFeature.setText("");
@@ -144,6 +145,8 @@ public class register_fragment extends Fragment {
             try {
                 //Uri 파일을 Bitmap으로 만들어서 ImageView에 집어 넣는다.
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), filePath);
+                // 배경이미지 삭제 후 imageView를 통해 사진 확인
+                imageViewUpload.setBackgroundColor(0xFFFFFFFF);
                 imageViewUpload.setImageBitmap(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -167,7 +170,6 @@ public class register_fragment extends Fragment {
             //storage 주소와 폴더 파일명을 지정해 준다.
             StorageReference storageRef = firebaseStorage.getReferenceFromUrl("gs://chatting-ed067.appspot.com").child("UID").child(filename);
 
-            //올라가거라...
             storageRef.putFile(filePath)
                     //성공시
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -196,7 +198,7 @@ public class register_fragment extends Fragment {
                         }
                     });
         } else {
-            Toast.makeText(mContext, "파일을 먼저 선택하세요.", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, "선택된 사진 파일이 없습니다.", Toast.LENGTH_LONG).show();
         }
     }
 }
