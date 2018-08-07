@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="반려견 등록"
+        android:text="반려동물 등록"
         android:textSize="48dp"
         android:layout_gravity="center"
         />
@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="강아지 종 :"
+            android:text="동물 이름 :"
             android:gravity="center"
             android:id="@+id/textViewSpecies"
             android:layout_weight="1"/>
@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:gravity="center"
-            android:text="강아지 특징 : " />
+            android:text="동물 특징 : " />
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
             android:id="@+id/buttonSaveDog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="강아지 정보 저장" />
+            android:text="동물 정보 저장" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -87,13 +87,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/buttonChoose"
-                android:text="강아지 사진 선택" />
+                android:text="동물 사진 선택" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonUpload"
-                android:text="강아지 사진 저장"/>
+                android:text="동물 사진 저장"/>
         </LinearLayout>
     </LinearLayout>
 

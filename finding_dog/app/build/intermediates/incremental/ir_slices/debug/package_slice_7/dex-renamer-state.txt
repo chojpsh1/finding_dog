@@ -1,0 +1,4 @@
+#Tue Aug 07 17:27:07 KST 2018
+base.0=C\:\\Users\\ATIV-5\\finding_dog\\finding_dog\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\24
+path.0=classes.dex
+renamed.0=classes.dex
