@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity{
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener(){
             @Override
             public boolean onNavigationItemSelected(@Nullable MenuItem item){
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.pet_register:
                         getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,new register_fragment()).commit();
                         break;
@@ -38,11 +38,9 @@ public class MainActivity extends AppCompatActivity{
                     case R.id.setting:
                         getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,new setting_fragment()).commit();
                         break;
-
                 }
                 return true;
             }
         });
     }
-
 }
