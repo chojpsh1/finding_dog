@@ -41,14 +41,15 @@ public class LoginActivity extends AppCompatActivity {
         singup = (Button) findViewById(R.id.loginActivity_button_signup);
         login.setBackgroundColor(Color.parseColor(splash_background));
         singup.setBackgroundColor(Color.parseColor(splash_background));
+
         login.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                loginEmail("", "");
+                // loginEmail("", "");
                 startActivity(new Intent(LoginActivity.this,MainActivity.class));
-                finish();
             }
         });
+
         singup.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -75,11 +76,8 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                             // updateUI(null);
                         }
-
                         // ...
                     }
                 });
     }
-
-
 }
