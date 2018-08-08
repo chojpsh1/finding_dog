@@ -43,21 +43,24 @@ public class SignupActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         mContext = this;
-        
+
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextName = findViewById(R.id.editTextName);
         editTextPassword = findViewById(R.id.editTextPassword);
         buttonSignUp = findViewById(R.id.buttonSignUp);
-        
+
+        mAuth = FirebaseAuth.getInstance();
         buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createUser(editTextEmail.getText().toString(), editTextPassword.getText().toString());
+                String email = editTextEmail.getText().toString();
+                String pass = editTextPassword.getText().toString();
+                createUser(email, pass);
             }
         });
     }
 
-    private void createUser(String email, String password) {
+    public void createUser(String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
