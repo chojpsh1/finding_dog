@@ -52,10 +52,10 @@ public class register_fragment extends Fragment {
     Button buttonSaveDog;
     Button buttonChoose;
     Button buttonUpload;
-    FirebaseDatabase firebaseDatabase;
-    DatabaseReference firebaseDatabaseRef;
     Uri filePath;
     ImageView imageViewUpload;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference firebaseDatabaseRef;
     FirebaseStorage firebaseStorage;
     StorageReference firebaseStorageRef;
     String current_uid;
