@@ -2,4 +2,7 @@
     <string name="app_name">finding_dog</string>
     <string name="facebook_app_id">239336903367814</string>
     <string name="fb_login_protocol_scheme">fb239336903367814</string>
+
+    <string name="image_picker_error">Something is wrong with that image. Pick a different one please.</string>
+    <string name="loading_message">Uploading image. Please wait.</string>
 </resources>
