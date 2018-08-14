@@ -13,9 +13,12 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.Toast;
 
+import com.example.minyoung.finding_dog.LoginActivity;
 import com.example.minyoung.finding_dog.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -40,6 +43,7 @@ public class search_fragment extends Fragment {
     Context mContext;
     Uri filePath;
     ImageView imageViewUpload;
+    View view;
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference firebaseDatabaseRef;
@@ -62,8 +66,18 @@ public class search_fragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_search, container, false);
+        view =  inflater.inflate(R.layout.fragment_search, container, false);
         mContext = container.getContext();
+
+        Button search = (Button) view.findViewById(R.id.search_btn);
+        search.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+               //카메라 버튼 클릭시
+            }
+        });
         return view;
     }
 
