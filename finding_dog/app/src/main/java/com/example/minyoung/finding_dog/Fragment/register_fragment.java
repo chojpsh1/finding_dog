@@ -440,6 +440,11 @@ public class register_fragment extends Fragment {
                     case "dog like mammal":
                     case "dog":
                     case "dog breed":
+                    case "nose":
+                    case "puppy":
+                    case "dog breed group":
+                    case "snout":
+                    case "close up":
                         break;
                     default:
                         message.append(String.format(Locale.US, "%s", label.getDescription()));
