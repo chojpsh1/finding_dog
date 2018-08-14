@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity{
                 switch (item.getItemId()) {
                     case R.id.pet_register:
                         getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,new register_fragment()).commit();
-    //                    startActivity(new Intent(MainActivity.this, SignupActivity.class));
                         break;
                     case R.id.search:
                         getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,new search_fragment()).commit();
