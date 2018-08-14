@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,6 +18,8 @@ import java.util.List;
 
 public class ChatArrayAdapter extends ArrayAdapter {
     private TextView chatText;
+    private ImageView chatImage;
+
     private List chatMessageList = new ArrayList();
     private LinearLayout singleMessageContainer;
 
@@ -28,6 +31,7 @@ public class ChatArrayAdapter extends ArrayAdapter {
     public ChatArrayAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
     }
+
 
     public int getCount() {
         return this.chatMessageList.size();
@@ -43,11 +47,24 @@ public class ChatArrayAdapter extends ArrayAdapter {
             LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(R.layout.chatmessage, parent, false);
         }
-        singleMessageContainer = (LinearLayout) row.findViewById(R.id.singleMessageContainer);
+        singleMessageContainer = row.findViewById(R.id.singleMessageContainer);
+
         ChatMessage chatMessageObj = getItem(position);
+
         chatText = (TextView) row.findViewById(R.id.chatmessage);
-        chatText.setText(chatMessageObj.message);
-//        chatText.setBackgroundResource(chatMessageObj.left ? R.drawable.bubble_a : R.drawable.bubble_b);
+        chatImage = (ImageView) row.findViewById(R.id.chatimage);
+
+        if(chatMessageObj.message != null) {
+            chatText.setVisibility(View.VISIBLE);
+            chatImage.setVisibility(View.GONE);
+            chatText.setText(chatMessageObj.message);
+        }
+        else{
+            chatText.setVisibility(View.GONE);
+            chatImage.setVisibility(View.VISIBLE);
+            chatImage.setImageBitmap(chatMessageObj.image);
+        }
+
         singleMessageContainer.setGravity(chatMessageObj.left ? Gravity.LEFT : Gravity.RIGHT);
         return row;
     }
