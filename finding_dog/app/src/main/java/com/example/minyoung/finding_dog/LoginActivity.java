@@ -297,7 +297,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     databaseReference2 = FirebaseDatabase.getInstance().getReference("Current_user");
                     databaseReference2.setValue(null);
-                    databaseReference2.child(user_email[0]).child("uid").setValue(user_email[0]);
+                    databaseReference2.child(user_email[0]).child("uid").setValue(user_email);
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 //                    intent.putExtra("uid", kakao_email);
                     startActivity(intent);

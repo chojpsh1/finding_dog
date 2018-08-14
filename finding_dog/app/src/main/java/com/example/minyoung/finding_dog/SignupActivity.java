@@ -44,7 +44,7 @@ public class SignupActivity extends AppCompatActivity{
         buttonSignUp = findViewById(R.id.buttonSignUp);
 
         mAuth = FirebaseAuth.getInstance();
-        buttonSignUp.setOnClickListener(new View.OnClickListener() {
+        buttonSignUp.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 String email = editTextEmail.getText().toString();

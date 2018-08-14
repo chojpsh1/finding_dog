@@ -3,9 +3,30 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:text="채팅"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:text="채팅"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/chat_my_id"
+            android:layout_width="match_parent"
+            android:layout_height="48dp" />
+        <EditText
+            android:id="@+id/chat_your_id"
+            android:layout_width="match_parent"
+            android:layout_height="48dp" />
+        <Button
+            android:id="@+id/start_chatting_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:text="temp"/>
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
