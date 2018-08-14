@@ -116,7 +116,14 @@ public class LoginActivity extends AppCompatActivity {
 
                 String email = ((EditText) findViewById(R.id.loginActivity_edittext_id)).getText().toString();
                 String password = ((EditText) findViewById(R.id.loginActivity_edittext_password)).getText().toString();
+                ///////////////////////////////////////////////////////////
+                // 자동 로그인
+                //Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                //startActivity(intent);
+                ///////////////////////////////////////////////////////////
+                // 로그인 정보 확인
                 SingIn(email, password);
+                ///////////////////////////////////////////////////////////
             }
         });
 
