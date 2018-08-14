@@ -3,17 +3,67 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_gravity="center_horizontal"
-    android:gravity="center"
     android:layout_height="match_parent">
 
-
     <TextView
+        android:id="@+id/setting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="반려견 분실"
-        android:id="@+id/temp"/>
+        android:layout_alignParentStart="true"
+        android:text="설정"
+        android:layout_marginTop="15dp"
+        android:textColor="#000000"
+        android:textSize="30dp"
+        android:textStyle="bold" />
+
+    <View style="@style/Divider"
+        android:layout_marginTop="8dp"
+        android:layout_below="@+id/setting"
+        android:id="@+id/line2"/>
+
+    <ImageView
+        android:contentDescription="StringValue"
+        android:layout_marginTop="8dp"
+        android:layout_below="@+id/line2"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@drawable/profile"
+        android:id="@+id/profile"/>
+
+    <EditText
+        android:layout_alignBaseline="@+id/profile"
+        android:id="@+id/user_edittext"
+        android:layout_width="250dp"
+        android:layout_height="70dp"
+        android:layout_above="@+id/line1"
+        android:layout_toEndOf="@+id/temp2" />
+
+    <View style="@style/Divider"
+        android:layout_marginTop="8dp"
+        android:layout_below="@+id/profile"
+        android:id="@+id/line1"/>
+
+    <ImageView
+        android:contentDescription="StringValue"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/line1"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/dog"
+        android:id="@+id/dog_img"/>
+
+    <TextView
+        android:id="@+id/temp"
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/dog_img"
+        android:layout_toEndOf="@+id/dog_img"
+        android:text="반려견 분실" />
 
     <Switch
+        android:layout_alignBaseline="@+id/temp"
         android:id="@+id/switch1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,5 +73,46 @@
         android:textOff="OFF"
         android:textSize="20dp"
         android:layout_toRightOf="@+id/temp" />
+
+    <View style="@style/Divider2"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/switch1"
+        android:id="@+id/line3"/>
+
+    <ImageView
+        android:contentDescription="StringValue"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/line3"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/logout"
+        android:id="@+id/logout_img"/>
+
+    <TextView
+        android:id="@+id/temp2"
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/logout_img"
+        android:layout_toEndOf="@+id/logout_img"
+        android:text="로그아웃" />
+
+    <Button
+        android:id="@+id/logout_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/temp2"
+        android:layout_alignBottom="@+id/temp2"
+        android:layout_alignParentEnd="true"
+        android:textColor="#ffffff"
+        android:background="@color/colorButton"
+        android:text="logout" />
+
+    <View style="@style/Divider2"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/temp2" />
+
+
 
 </RelativeLayout>
