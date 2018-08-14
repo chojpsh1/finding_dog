@@ -60,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
     private DatabaseReference databaseReference2;
     private EditText loginActivity_edittext_id;
     String user_email[];
+    private FirebaseAuth mAuth;
 
     //페이스북 로그인을 위한 변수
     private static final String TAG = "LoginActivity";
@@ -79,6 +80,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         mFirebaseRemoteConfig=FirebaseRemoteConfig.getInstance();
         loginActivity_edittext_id=(EditText)findViewById(R.id.loginActivity_edittext_id);
+        mAuth = FirebaseAuth.getInstance();
 
         String splash_background=mFirebaseRemoteConfig.getString("splash_background");
 
@@ -113,6 +115,11 @@ public class LoginActivity extends AppCompatActivity {
                 databaseReference2.setValue(null);
                 user_email=loginActivity_edittext_id.getText().toString().split("@");
                 databaseReference2.child(user_email[0]).child("uid").setValue(loginActivity_edittext_id.getText().toString());
+
+                String email = ((EditText) findViewById(R.id.loginActivity_edittext_id)).getText().toString();
+                String password = ((EditText) findViewById(R.id.loginActivity_edittext_password)).getText().toString();
+                SingIn(email, password);
+
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
@@ -156,12 +163,11 @@ public class LoginActivity extends AppCompatActivity {
                                         DataSnapshot temp=child.next();
                                         String key=temp.getKey();
                                         if(key.equals(user_email[0])){
-                                            a=1;
-
+                                            a = 1;
                                         }
                                     }
 
-                                    if(a==0){
+                                    if(a == 0){
                                         //email저장
                                         databaseReference.child(user_email[0]).child("uid").setValue(facebook_email);
                                     }
@@ -170,6 +176,7 @@ public class LoginActivity extends AppCompatActivity {
                                 public void onCancelled(DatabaseError databaseError) {
                                 }
                             });
+
                             //현재 접속중인 사용자 id 저장하기
                             databaseReference = FirebaseDatabase.getInstance().getReference("Current_user");
                             databaseReference.setValue(null);
@@ -178,9 +185,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
-
                         }catch (Exception e){
-
                         }
                     }
                 });
@@ -202,6 +207,29 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(TAG, "onError");
             }
         });
+    }
+
+    private void SingIn(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            Toast.makeText(LoginActivity.this, "Authentication successed.",
+                                    Toast.LENGTH_SHORT).show();
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            //updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            //updateUI(null);
+                        }
+                    }
+                });
     }
 
 
