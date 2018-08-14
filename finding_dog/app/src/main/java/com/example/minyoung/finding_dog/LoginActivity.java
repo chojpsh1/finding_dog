@@ -84,7 +84,6 @@ public class LoginActivity extends AppCompatActivity {
 
         String splash_background=mFirebaseRemoteConfig.getString("splash_background");
 
-
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
             getWindow().setStatusBarColor(Color.parseColor(splash_background));
         }
@@ -99,7 +98,6 @@ public class LoginActivity extends AppCompatActivity {
 //            }
 //        });
 //        btn_kakao_login = (com.kakao.usermgmt.LoginButton) findViewById(R.id.btn_kakao_login);
-
 
         firebaseAuth = firebaseAuth.getInstance();
 
@@ -119,10 +117,6 @@ public class LoginActivity extends AppCompatActivity {
                 String email = ((EditText) findViewById(R.id.loginActivity_edittext_id)).getText().toString();
                 String password = ((EditText) findViewById(R.id.loginActivity_edittext_password)).getText().toString();
                 SingIn(email, password);
-
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
             }
         });
 
@@ -148,7 +142,6 @@ public class LoginActivity extends AppCompatActivity {
                 GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(JSONObject object, GraphResponse response) {
-
                         try {
                             final String facebook_email=object.getString("email");
                             user_email=facebook_email.split("@");
@@ -216,41 +209,17 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithEmail:success");
-                            Toast.makeText(LoginActivity.this, "Authentication successed.",
+                            Toast.makeText(LoginActivity.this, "로그인 성공",
                                     Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
                             FirebaseUser user = mAuth.getCurrentUser();
-                            //updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                            Toast.makeText(LoginActivity.this, "아이디 또는 비밀번호가 잘못되었습니다.",
                                     Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
                         }
-                    }
-                });
-    }
-
-
-    private void loginEmail(String email, String password) {
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("", "signInWithEmail:success");
-                            FirebaseUser user = firebaseAuth.getCurrentUser();
-                            // updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("", "signInWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            // updateUI(null);
-                        }
-
                     }
                 });
     }
