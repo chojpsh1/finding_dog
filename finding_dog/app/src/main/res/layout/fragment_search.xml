@@ -15,6 +15,7 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:background="@drawable/search_dog" />
+
         <TextView
             android:layout_marginTop="200dp"
             android:text="      강아지 사진으로 주인 찾기  "
@@ -35,7 +36,10 @@
         android:layout_height="75dp"
         android:background="@drawable/camera_3" />
 
-
+    <TextView
+        android:id="@+id/species"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 
 </LinearLayout>
