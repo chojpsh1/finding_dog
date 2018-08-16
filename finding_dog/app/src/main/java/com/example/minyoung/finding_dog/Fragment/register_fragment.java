@@ -171,7 +171,6 @@ public class register_fragment extends Fragment {
                 DataSnapshot temp=child.next();
                 String key=temp.getKey();
                 current_uid=key;
-
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -183,7 +182,6 @@ public class register_fragment extends Fragment {
         mConditionRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                int a=0;
                 Iterator<DataSnapshot> child = dataSnapshot.getChildren().iterator();
 
                 while(child.hasNext()) {
@@ -241,7 +239,7 @@ public class register_fragment extends Fragment {
 
                 callCloudVision(bitmap);
                 imageViewUpload.setImageBitmap(bitmap);
-
+                filePath = uri;
             } catch (IOException e) {
                 Log.d(TAG, "Image picking failed because " + e.getMessage());
                 Toast.makeText(mContext, R.string.image_picker_error, Toast.LENGTH_LONG).show();
