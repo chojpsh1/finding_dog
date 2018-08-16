@@ -6,10 +6,15 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.util.Log;
+
+import java.io.ByteArrayOutputStream;
+import java.sql.Blob;
 
 public class DbOpenHelper {
 
-    private static final String DATABASE_NAME = "SQLite.db";
+    private static final String DATABASE_NAME = "SQLite_0.db";
     private static final int DATABASE_VERSION = 1;
     public static SQLiteDatabase mDB;
     private DatabaseHelper mDBHelper;
@@ -56,11 +61,23 @@ public class DbOpenHelper {
         mDB.close();
     }
 
-    public long insertColumn(String tableName, int side, long time , String msg){
+    public long insertColumn(String tableName, int side, long time , String type, String msg, Bitmap img){
         ContentValues values = new ContentValues();
         values.put(DataBases.CreateDB.SIDE, side);
         values.put(DataBases.CreateDB.TIME, time);
+        values.put(DataBases.CreateDB.TYPE, type);
         values.put(DataBases.CreateDB.MSG, msg);
+
+        if(type.contains("picture")) {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            img.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+            byte[] insert_img = byteArrayOutputStream.toByteArray();
+            values.put(DataBases.CreateDB.IMG, insert_img);
+        }
+        else{
+            values.put(DataBases.CreateDB.IMG, "null");
+        }
+
         return mDB.insert(tableName, null, values);
     }
 
