@@ -1,9 +1,12 @@
 package com.example.minyoung.finding_dog.Fragment;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
@@ -14,6 +17,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -45,9 +50,14 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class chatroom_fragment extends Fragment {
@@ -77,6 +87,8 @@ public class chatroom_fragment extends Fragment {
 
     //Storage
     private FirebaseStorage storage;
+
+    public String filename;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -218,7 +230,7 @@ public class chatroom_fragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 0){
+        if (requestCode == 0 && resultCode == RESULT_OK){
             filePath = data.getData();
             try {
                 //Uri 파일을 Bitmap으로 만들어서 ImageView에 집어 넣는다.
@@ -258,7 +270,8 @@ public class chatroom_fragment extends Fragment {
         databaseReference.child("chat").child(yourID).child(myID).push().setValue(chatText.getText().toString());
 
         // local db에 저장
-        mDbOpenHelper.insertColumn(yourID, 0, 0, chatText.getText().toString());
+        mDbOpenHelper.open();
+        mDbOpenHelper.insertColumn(yourID, 0, 0, "msg",chatText.getText().toString(), null);
         Log.i("input : msg", chatText.getText().toString());
         chatText.setText("");
         return true;
@@ -268,7 +281,8 @@ public class chatroom_fragment extends Fragment {
         chatArrayAdapter.add(new ChatMessage(true, msg));
 
         // local db에 저장
-        mDbOpenHelper.insertColumn(yourID, 1, 0, msg);
+        mDbOpenHelper.open();
+        mDbOpenHelper.insertColumn(yourID, 1, 0, "msg", msg, null);
         Log.i("input : msg", msg);
 
         return true;
@@ -285,7 +299,7 @@ public class chatroom_fragment extends Fragment {
         //Unique한 파일명을 만들자.
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMHH_mmss");
         Date now = new Date();
-        String filename = myID + formatter.format(now)  + yourID + ".png";
+        filename = myID + formatter.format(now)  + yourID + ".png";
         //storage 주소와 폴더 파일명을 지정해 준다.
         StorageReference storageRef = storage.getReferenceFromUrl("gs://chatting-ed067.appspot.com").child("images").child(filename);
 
@@ -301,6 +315,7 @@ public class chatroom_fragment extends Fragment {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 progressDialog.dismiss(); //업로드 진행 Dialog 상자 닫기
                 Toast.makeText(mContext, "전송 완료!", Toast.LENGTH_LONG).show();
+                databaseReference.child("chat").child(yourID).child(myID).push().child("image").setValue(filename);
             }
         })
                 //실패시
@@ -321,9 +336,11 @@ public class chatroom_fragment extends Fragment {
                         progressDialog.setMessage("전송중 " + ((int) progress) + "% ...");
                     }
                 });
-        mDbOpenHelper.open();
 
-        databaseReference.child("chat").child(yourID).child(myID).push().child("image").setValue(filename);
+
+
+        mDbOpenHelper.open();
+        mDbOpenHelper.insertColumn(yourID, 0, 0, "picture", "", bitmap);
 
         buttonPicture.setVisibility(View.VISIBLE);
         buttonPictureCancel.setVisibility(View.GONE);
@@ -332,7 +349,6 @@ public class chatroom_fragment extends Fragment {
 
         buttonSend.setVisibility(View.VISIBLE);
         buttonSendPicture.setVisibility(View.GONE);
-
 
         return true;
     }
@@ -347,6 +363,7 @@ public class chatroom_fragment extends Fragment {
             public void onSuccess(byte[] bytes) {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length) ;
                 chatArrayAdapter.add(new ChatMessage(true, bitmap));
+                mDbOpenHelper.insertColumn(yourID, 1, 0, "picture", null, bitmap);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -357,8 +374,6 @@ public class chatroom_fragment extends Fragment {
 
         islandRef.delete();
 
-        mDbOpenHelper.open();
-
         return true;
     }
     private void updateChatMessage(){
@@ -367,8 +382,19 @@ public class chatroom_fragment extends Fragment {
             ChatMessage chatMessage;
             while (mCursor.moveToNext()) {
                 boolean side = mCursor.getInt(mCursor.getColumnIndex("side")) == 1;
-                chatMessage = new ChatMessage(side, mCursor.getString(mCursor.getColumnIndex("msg")));
-                chatArrayAdapter.add(chatMessage);
+                boolean type = mCursor.getString(mCursor.getColumnIndex("type")).contains("msg");
+                Log.i("@@@@@@@@@@@@@@@@@@@@@", mCursor.getString(mCursor.getColumnIndex("type")) + type);
+                if(type){
+                    chatMessage = new ChatMessage(side, mCursor.getString(mCursor.getColumnIndex("msg")));
+                    chatArrayAdapter.add(chatMessage);
+                }
+                else{
+                    byte[] byteArray = mCursor.getBlob(mCursor.getColumnIndex("img"));
+                    Bitmap bitmap = BitmapFactory.decodeByteArray( byteArray, 0, byteArray.length ) ;
+
+                    chatMessage = new ChatMessage(side, bitmap);
+                    chatArrayAdapter.add(chatMessage);
+                }
             }
 
             mCursor.close();
