@@ -189,18 +189,20 @@ public class register_fragment extends Fragment {
                 while(child.hasNext()) {
                     DataSnapshot temp=child.next();
                     String key=temp.getKey();
-                    Toast.makeText(mContext,current_uid,Toast.LENGTH_LONG).show();
                     if(key.equals(current_uid)){
                         // editText의 내용을 읽어옴
                         String species = editTextSpecies.getText().toString();
                         String location = editTextLocation.getText().toString();
                         String feature = editTextFeature.getText().toString();
                         // Dog 클래스 객체생성
-                        Dog dog = new Dog(species, location, feature);
-                        Map<String, Object> postValues = dog.toMap();
-                        Toast.makeText(mContext,"객체 생성",Toast.LENGTH_LONG).show();
+//                        Dog dog = new Dog(species, location, feature);
+//                        Map<String, Object> postValues = dog.toMap();
+//                        Toast.makeText(mContext,"객체 생성",Toast.LENGTH_LONG).show();
                         Map<String, Object> childUpdates = new HashMap<>();
-                        childUpdates.put("/User/"+current_uid, postValues);
+                        childUpdates.put("/User/"+current_uid+"/species", species);
+                        childUpdates.put("/User/"+current_uid+"/location", location);
+                        childUpdates.put("/User/"+current_uid+"/feature", feature);
+
                         firebaseDatabaseRef.updateChildren(childUpdates);
 
                         Toast.makeText(mContext,"저장 완료",Toast.LENGTH_LONG).show();
@@ -440,6 +442,11 @@ public class register_fragment extends Fragment {
                     case "dog like mammal":
                     case "dog":
                     case "dog breed":
+                    case "nose":
+                    case "puppy":
+                    case "dog breed group":
+                    case "snout":
+                    case "close up":
                         break;
                     default:
                         message.append(String.format(Locale.US, "%s", label.getDescription()));

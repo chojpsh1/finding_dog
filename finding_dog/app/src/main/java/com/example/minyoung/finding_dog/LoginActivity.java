@@ -60,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
     private DatabaseReference databaseReference2;
     private EditText loginActivity_edittext_id;
     String user_email[];
+    private FirebaseAuth mAuth;
 
     //페이스북 로그인을 위한 변수
     private static final String TAG = "LoginActivity";
@@ -79,9 +80,9 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         mFirebaseRemoteConfig=FirebaseRemoteConfig.getInstance();
         loginActivity_edittext_id=(EditText)findViewById(R.id.loginActivity_edittext_id);
+        mAuth = FirebaseAuth.getInstance();
 
         String splash_background=mFirebaseRemoteConfig.getString("splash_background");
-
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
             getWindow().setStatusBarColor(Color.parseColor(splash_background));
@@ -98,7 +99,6 @@ public class LoginActivity extends AppCompatActivity {
 //        });
 //        btn_kakao_login = (com.kakao.usermgmt.LoginButton) findViewById(R.id.btn_kakao_login);
 
-
         firebaseAuth = firebaseAuth.getInstance();
 
         login = (Button) findViewById(R.id.loginActivity_button_login);
@@ -113,9 +113,10 @@ public class LoginActivity extends AppCompatActivity {
                 databaseReference2.setValue(null);
                 user_email=loginActivity_edittext_id.getText().toString().split("@");
                 databaseReference2.child(user_email[0]).child("uid").setValue(loginActivity_edittext_id.getText().toString());
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
+
+                String email = ((EditText) findViewById(R.id.loginActivity_edittext_id)).getText().toString();
+                String password = ((EditText) findViewById(R.id.loginActivity_edittext_password)).getText().toString();
+                SingIn(email, password);
             }
         });
 
@@ -141,7 +142,6 @@ public class LoginActivity extends AppCompatActivity {
                 GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(JSONObject object, GraphResponse response) {
-
                         try {
                             final String facebook_email=object.getString("email");
                             user_email=facebook_email.split("@");
@@ -156,12 +156,11 @@ public class LoginActivity extends AppCompatActivity {
                                         DataSnapshot temp=child.next();
                                         String key=temp.getKey();
                                         if(key.equals(user_email[0])){
-                                            a=1;
-
+                                            a = 1;
                                         }
                                     }
 
-                                    if(a==0){
+                                    if(a == 0){
                                         //email저장
                                         databaseReference.child(user_email[0]).child("uid").setValue(facebook_email);
                                     }
@@ -170,6 +169,7 @@ public class LoginActivity extends AppCompatActivity {
                                 public void onCancelled(DatabaseError databaseError) {
                                 }
                             });
+
                             //현재 접속중인 사용자 id 저장하기
                             databaseReference = FirebaseDatabase.getInstance().getReference("Current_user");
                             databaseReference.setValue(null);
@@ -178,9 +178,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
-
                         }catch (Exception e){
-
                         }
                     }
                 });
@@ -204,25 +202,24 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-
-    private void loginEmail(String email, String password) {
-        firebaseAuth.signInWithEmailAndPassword(email, password)
+    private void SingIn(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d("", "signInWithEmail:success");
-                            FirebaseUser user = firebaseAuth.getCurrentUser();
-                            // updateUI(user);
+                            Toast.makeText(LoginActivity.this, "로그인 성공",
+                                    Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                            FirebaseUser user = mAuth.getCurrentUser();
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w("", "signInWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                            Toast.makeText(LoginActivity.this, "아이디 또는 비밀번호가 잘못되었습니다.",
                                     Toast.LENGTH_SHORT).show();
-                            // updateUI(null);
                         }
-
                     }
                 });
     }
@@ -269,7 +266,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     databaseReference2 = FirebaseDatabase.getInstance().getReference("Current_user");
                     databaseReference2.setValue(null);
-                    databaseReference2.child(user_email[0]).child("uid").setValue(user_email[0]);
+                    databaseReference2.child(user_email[0]).child("uid").setValue(user_email);
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 //                    intent.putExtra("uid", kakao_email);
                     startActivity(intent);
