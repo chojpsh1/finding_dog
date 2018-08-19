@@ -83,11 +83,16 @@ public class search_fragment extends Fragment {
     ImageView imageViewUpload;
     View view;
     EditText editText;
-    ListView listView;
+    static ListView listView;
     SingerAdapter adapter;
     ArrayList<String> dog_species;
     ArrayList<String> dog_location;
     ArrayList<String> dog_feature;
+
+    static SingerAdapter new_adapter;
+    static ArrayList<String> dog_species2;
+    static ArrayList<String> dog_location2;
+    static ArrayList<String> dog_feature2;
 
 
     FirebaseDatabase firebaseDatabase;
@@ -100,7 +105,7 @@ public class search_fragment extends Fragment {
     private static final int GALLERY_IMAGE_REQUEST = 1;
     private static final int MAX_DIMENSION = 1200;
 
-    private static final String CLOUD_VISION_API_KEY = "AIzaSyC9ucj6c1SJRSzRERLiheBrElqYfU76K_k";
+    private static final String CLOUD_VISION_API_KEY = "";
     private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
     private static final String ANDROID_CERT_HEADER = "X-Android-Cert";
     private static final int MAX_LABEL_RESULTS = 5;
@@ -131,6 +136,8 @@ public class search_fragment extends Fragment {
         dog_location = new ArrayList<String>();
         dog_feature = new ArrayList<String>();
 
+
+
         Button search = (Button) view.findViewById(R.id.search_btn);
         search.setOnClickListener(new View.OnClickListener()
         {
@@ -144,6 +151,8 @@ public class search_fragment extends Fragment {
                     intent.setAction(Intent.ACTION_GET_CONTENT);
                     startActivityForResult(Intent.createChooser(intent, "Select a photo"),
                             GALLERY_IMAGE_REQUEST);
+
+
                 }
             }
         });
@@ -162,17 +171,9 @@ public class search_fragment extends Fragment {
                     String key=temp.child("LoseState").getValue().toString();
 
                     if(key.equals("True")){
-                        Toast.makeText(mContext,"True 들어옴",Toast.LENGTH_LONG).show();
                         dog_species.add(temp.child("species").getValue().toString());
-//                        Toast.makeText(mContext,temp.child("species").getValue().toString(),Toast.LENGTH_SHORT).show();
-//                        Toast.makeText(mContext,temp.child("location").getValue().toString(),Toast.LENGTH_SHORT).show();
-//                        Toast.makeText(mContext,temp.child("feature").getValue().toString(),Toast.LENGTH_LONG).show();
-
                         dog_location.add(temp.child("location").getValue().toString());
                         dog_feature.add(temp.child("feature").getValue().toString());
-
-
-//                        adapter.addItem(new SingerItem2(dog_species, dog_location,dog_feature,R.drawable.img1));
                     }
 
                 }
@@ -320,10 +321,47 @@ public class search_fragment extends Fragment {
             return "Cloud Vision API request failed. Check logs for details.";
         }
 
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(final String result) {
             MainActivity activity = mActivityWeakReference.get();
+            dog_species2=new ArrayList<String>();
+            dog_location2=new ArrayList<String>();
+            dog_feature2=new ArrayList<String>();
+            new_adapter = new SingerAdapter();
+
             if (activity != null && !activity.isFinishing()) {
                 TextView imageDetail = activity.findViewById(R.id.species);
+
+                //종에 따른 강아지 리스트 다시 출력
+                DatabaseReference database2 = FirebaseDatabase.getInstance().getReference();
+                DatabaseReference mConditionRef2=database2.child("User");
+
+                mConditionRef2.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Iterator<DataSnapshot> child = dataSnapshot.getChildren().iterator();
+
+                        while(child.hasNext()) {
+                            DataSnapshot temp=child.next();
+                            String key=temp.child("species").getValue().toString();
+                            String state=temp.child("LoseState").getValue().toString();
+                            boolean got = key.contains(result);
+                            if(got&&state.equals("True")){
+                                dog_species2.add(temp.child("species").getValue().toString());
+                                dog_location2.add(temp.child("location").getValue().toString());
+                                dog_feature2.add(temp.child("feature").getValue().toString());
+                            }
+
+                        }
+                        for(int i=0;i<dog_species2.size();i++) {
+                            new_adapter.addItem(new SingerItem2(dog_species2.get(i), dog_location2.get(i), dog_feature2.get(i), R.drawable.img1));
+                        }
+                        listView.setAdapter(new_adapter);
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+
+                });
                 imageDetail.setText(result);
             }
         }
@@ -439,7 +477,7 @@ public class search_fragment extends Fragment {
         return message.toString();
     }
 
-    class SingerAdapter extends BaseAdapter {
+    static class SingerAdapter extends BaseAdapter {
         ArrayList<SingerItem2> items = new ArrayList<SingerItem2>();
 
         @Override
