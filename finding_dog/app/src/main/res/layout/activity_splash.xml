@@ -8,6 +8,7 @@
     android:layout_height="match_parent"
     tools:context="com.example.minyoung.finding_dog.SplashActivity">
 <ImageView
+    android:id="@+id/loading_img"
     android:src="@drawable/puppy"
     android:layout_width="120dp"
     android:layout_height="120dp" />

@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,new register_fragment()).commit();
 
 //        Intent intent = getIntent();
 //        String uid = intent.getExtras().getString("uid");
