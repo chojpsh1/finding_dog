@@ -20,6 +20,7 @@
             android:background="@drawable/camera_3" />
 
         <TextView
+            android:id="@+id/species"
             android:layout_marginLeft="10dp"
             android:layout_width="240dp"
             android:layout_height="50dp"
@@ -35,15 +36,12 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:background="@drawable/search_dog" />
-
-
-
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/species"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <View style="@style/Divider"
+        android:layout_marginTop="8dp"
+        android:layout_below="@+id/setting"
+        android:id="@+id/line2"/>
 
     <ListView
         android:layout_width="match_parent"
