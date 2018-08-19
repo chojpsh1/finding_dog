@@ -104,7 +104,6 @@ public class search_fragment extends Fragment {
     private static final int GALLERY_PERMISSIONS_REQUEST = 0;
     private static final int GALLERY_IMAGE_REQUEST = 1;
     private static final int MAX_DIMENSION = 1200;
-
     private static final String CLOUD_VISION_API_KEY = "";
     private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
     private static final String ANDROID_CERT_HEADER = "X-Android-Cert";
@@ -188,10 +187,12 @@ public class search_fragment extends Fragment {
 
         });
 
+        //*********리스트 선택 했을 때 채팅 연결하기*********//
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 SingerItem2 item = (SingerItem2) adapter.getItem(position);
+
                 Toast.makeText(getApplicationContext(),"선택 : "+item.getName(), Toast.LENGTH_LONG).show();
             }
         });
@@ -363,6 +364,15 @@ public class search_fragment extends Fragment {
 
                 });
                 imageDetail.setText(result);
+                //*********리스트 선택 했을 때 채팅 연결하기*********//
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                        SingerItem2 item = (SingerItem2) new_adapter.getItem(position);
+
+                        Toast.makeText(getApplicationContext(),"선택 : "+item.getName(), Toast.LENGTH_LONG).show();
+                    }
+                });
             }
         }
     }
