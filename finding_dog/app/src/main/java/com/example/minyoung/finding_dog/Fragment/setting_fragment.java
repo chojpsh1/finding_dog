@@ -36,13 +36,16 @@ public class setting_fragment extends Fragment{
     String current_uid;
     EditText user_edit;
     Button logout_btn;
+    Switch sw;
     View view;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_setting, container, false);
-        Switch sw = (Switch) view.findViewById(R.id.switch1);
+        sw = (Switch) view.findViewById(R.id.switch1);
         user_edit = (EditText) view.findViewById(R.id.user_edittext);
         logout_btn= (Button) view.findViewById(R.id.logout_btn);
+
+
 
         logout_btn.setOnClickListener(new View.OnClickListener()
         {
@@ -109,7 +112,15 @@ public class setting_fragment extends Fragment{
                     String key=temp.getKey();
                     if(key.equals(current_uid)){
                         String str=temp.child("uid").getValue(String.class);
+                        String sw_state=temp.child("LoseState").getValue(String.class);
                         user_edit.setText(str);
+                        if (sw_state.equals("True")){
+                            sw.setChecked(true);
+                        }
+                        else{
+                            sw.setChecked(false);
+                        }
+
                     }
                 }
             }

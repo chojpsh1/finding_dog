@@ -8,6 +8,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
@@ -16,6 +19,9 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 public class SplashActivity extends AppCompatActivity {
     private LinearLayout linearLayout;
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
+    private ImageView location_img;
+    private Animation anim;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,25 +36,14 @@ public class SplashActivity extends AppCompatActivity {
                 .build();
         mFirebaseRemoteConfig.setConfigSettings(configSettings);
         mFirebaseRemoteConfig.setDefaults(R.xml.default_config);
+        initView();
         startLoading();
-        //Toast.makeText(SplashActivity.this,"fetch 직전",Toast.LENGTH_SHORT).show();
-//        displayMessage();
-//        mFirebaseRemoteConfig.fetch(0)
-//                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<Void> task) {
-//                        if (task.isSuccessful()) {
-//
-//                            // After config data is successfully fetched, it must be activated before newly fetched
-//                            // values are returned.
-//                            mFirebaseRemoteConfig.activateFetched();
-//                        } else {
-//
-//                        }
-//                        Toast.makeText(SplashActivity.this,"display 함수 직전",Toast.LENGTH_SHORT).show();
-//                        displayMessage();
-//                    }
-//                });
+    }
+    private void initView(){
+        location_img= (ImageView) findViewById(R.id.loading_img);
+        anim = AnimationUtils.loadAnimation(this, R.anim.loading);
+        location_img.setAnimation(anim);
+
     }
 
     private void startLoading() {
@@ -60,7 +55,7 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        }, 2000);
+        }, 1668);
     }
     void displayMessage() {
         //Toast.makeText(SplashActivity.this,"display 함수 들어옴",Toast.LENGTH_SHORT).show();
