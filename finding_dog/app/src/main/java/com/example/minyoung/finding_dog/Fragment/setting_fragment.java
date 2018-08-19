@@ -112,8 +112,8 @@ public class setting_fragment extends Fragment{
                     String key=temp.getKey();
                     if(key.equals(current_uid)){
                         String str=temp.child("uid").getValue(String.class);
-                        String sw_state=temp.child("LoseState").getValue(String.class);
                         user_edit.setText(str);
+                        String sw_state=temp.child("LoseState").getValue(String.class);
                         if (sw_state.equals("True")){
                             sw.setChecked(true);
                         }
