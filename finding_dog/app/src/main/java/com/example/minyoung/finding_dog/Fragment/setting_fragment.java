@@ -11,6 +11,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.minyoung.finding_dog.LoginActivity;
@@ -34,7 +35,7 @@ import java.util.Map;
 public class setting_fragment extends Fragment{
     DatabaseReference databaseReference;
     String current_uid;
-    EditText user_edit;
+    TextView user_edit;
     Button logout_btn;
     Switch sw;
     View view;
@@ -42,7 +43,7 @@ public class setting_fragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_setting, container, false);
         sw = (Switch) view.findViewById(R.id.switch1);
-        user_edit = (EditText) view.findViewById(R.id.user_edittext);
+        user_edit = (TextView) view.findViewById(R.id.user_edittext);
         logout_btn= (Button) view.findViewById(R.id.logout_btn);
 
 
