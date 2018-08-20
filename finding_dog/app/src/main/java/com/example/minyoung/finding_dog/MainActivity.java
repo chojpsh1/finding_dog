@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
+        getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,new register_fragment()).commit();
 //        Intent intent = getIntent();
 //        String uid = intent.getExtras().getString("uid");
         Log.e("TAG", mAuth.getUid());

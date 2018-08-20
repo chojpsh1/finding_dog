@@ -16,8 +16,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,10 +29,15 @@ import android.widget.Toast;
 import com.example.minyoung.finding_dog.LoginActivity;
 import com.example.minyoung.finding_dog.MainActivity;
 import com.example.minyoung.finding_dog.R;
+import com.example.minyoung.finding_dog.SingerItem2;
+import com.example.minyoung.finding_dog.SingerItemView2;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -55,10 +64,14 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Created by minyoung on 2018-06-28.
@@ -69,6 +82,18 @@ public class search_fragment extends Fragment {
     Uri filePath;
     ImageView imageViewUpload;
     View view;
+    EditText editText;
+    static ListView listView;
+    SingerAdapter adapter;
+    ArrayList<String> dog_species;
+    ArrayList<String> dog_location;
+    ArrayList<String> dog_feature;
+
+    static SingerAdapter new_adapter;
+    static ArrayList<String> dog_species2;
+    static ArrayList<String> dog_location2;
+    static ArrayList<String> dog_feature2;
+
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference firebaseDatabaseRef;
@@ -79,7 +104,6 @@ public class search_fragment extends Fragment {
     private static final int GALLERY_PERMISSIONS_REQUEST = 0;
     private static final int GALLERY_IMAGE_REQUEST = 1;
     private static final int MAX_DIMENSION = 1200;
-
     private static final String CLOUD_VISION_API_KEY = "";
     private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
     private static final String ANDROID_CERT_HEADER = "X-Android-Cert";
@@ -95,6 +119,7 @@ public class search_fragment extends Fragment {
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseDatabaseRef = firebaseDatabase.getReference();
 
+
         // 스토리지 Instance 생성
         firebaseStorage = FirebaseStorage.getInstance();
         firebaseStorageRef = firebaseStorage.getReference();
@@ -104,6 +129,13 @@ public class search_fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view =  inflater.inflate(R.layout.fragment_search, container, false);
         mContext = container.getContext();
+        listView = (ListView) view.findViewById(R.id.listView);
+
+        dog_species = new ArrayList<String>();
+        dog_location = new ArrayList<String>();
+        dog_feature = new ArrayList<String>();
+
+
 
         Button search = (Button) view.findViewById(R.id.search_btn);
         search.setOnClickListener(new View.OnClickListener()
@@ -118,9 +150,53 @@ public class search_fragment extends Fragment {
                     intent.setAction(Intent.ACTION_GET_CONTENT);
                     startActivityForResult(Intent.createChooser(intent, "Select a photo"),
                             GALLERY_IMAGE_REQUEST);
+
+
                 }
             }
         });
+
+        //losestate가 true인 강아지들의 정보를 리스트로 출력
+        adapter = new SingerAdapter();
+
+        DatabaseReference mConditionRef=firebaseDatabaseRef.child("User");
+        mConditionRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Iterator<DataSnapshot> child = dataSnapshot.getChildren().iterator();
+
+                while(child.hasNext()) {
+                    DataSnapshot temp=child.next();
+                    String key=temp.child("LoseState").getValue().toString();
+
+                    if(key.equals("True")){
+                        dog_species.add(temp.child("species").getValue().toString());
+                        dog_location.add(temp.child("location").getValue().toString());
+                        dog_feature.add(temp.child("feature").getValue().toString());
+                    }
+
+                }
+                for(int i=0;i<dog_species.size();i++) {
+                    adapter.addItem(new SingerItem2(dog_species.get(i), dog_location.get(i), dog_feature.get(i), R.drawable.img1));
+                }
+                listView.setAdapter(adapter);
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+
+        });
+
+        //*********리스트 선택 했을 때 채팅 연결하기*********//
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                SingerItem2 item = (SingerItem2) adapter.getItem(position);
+
+                Toast.makeText(getApplicationContext(),"선택 : "+item.getName(), Toast.LENGTH_LONG).show();
+            }
+        });
+
         return view;
     }
 
@@ -246,11 +322,57 @@ public class search_fragment extends Fragment {
             return "Cloud Vision API request failed. Check logs for details.";
         }
 
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(final String result) {
             MainActivity activity = mActivityWeakReference.get();
+            dog_species2=new ArrayList<String>();
+            dog_location2=new ArrayList<String>();
+            dog_feature2=new ArrayList<String>();
+            new_adapter = new SingerAdapter();
+
             if (activity != null && !activity.isFinishing()) {
                 TextView imageDetail = activity.findViewById(R.id.species);
+
+                //종에 따른 강아지 리스트 다시 출력
+                DatabaseReference database2 = FirebaseDatabase.getInstance().getReference();
+                DatabaseReference mConditionRef2=database2.child("User");
+
+                mConditionRef2.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Iterator<DataSnapshot> child = dataSnapshot.getChildren().iterator();
+
+                        while(child.hasNext()) {
+                            DataSnapshot temp=child.next();
+                            String key=temp.child("species").getValue().toString();
+                            String state=temp.child("LoseState").getValue().toString();
+                            boolean got = key.contains(result);
+                            if(got&&state.equals("True")){
+                                dog_species2.add(temp.child("species").getValue().toString());
+                                dog_location2.add(temp.child("location").getValue().toString());
+                                dog_feature2.add(temp.child("feature").getValue().toString());
+                            }
+
+                        }
+                        for(int i=0;i<dog_species2.size();i++) {
+                            new_adapter.addItem(new SingerItem2(dog_species2.get(i), dog_location2.get(i), dog_feature2.get(i), R.drawable.img1));
+                        }
+                        listView.setAdapter(new_adapter);
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+
+                });
                 imageDetail.setText(result);
+                //*********리스트 선택 했을 때 채팅 연결하기*********//
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                        SingerItem2 item = (SingerItem2) new_adapter.getItem(position);
+
+                        Toast.makeText(getApplicationContext(),"선택 : "+item.getName(), Toast.LENGTH_LONG).show();
+                    }
+                });
             }
         }
     }
@@ -364,4 +486,41 @@ public class search_fragment extends Fragment {
 
         return message.toString();
     }
+
+    static class SingerAdapter extends BaseAdapter {
+        ArrayList<SingerItem2> items = new ArrayList<SingerItem2>();
+
+        @Override
+        public int getCount() {
+            return items.size();
+        }
+
+        public void addItem(SingerItem2 item) {
+            items.add(item);
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return items.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup viewGroup) {
+            SingerItemView2 view = new SingerItemView2(getApplicationContext());
+
+            SingerItem2 item = items.get(position);
+            view.setName(item.getName());
+            view.setLocation(item.getLocation());
+            view.setFeature(item.getFeature());
+            view.setImage(item.getResId());
+
+            return view;
+        }
+    }
+
 }
