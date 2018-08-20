@@ -72,8 +72,6 @@ public class LoginActivity extends AppCompatActivity {
     private com.kakao.usermgmt.LoginButton btn_kakao;
     private SessionCallback callback;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

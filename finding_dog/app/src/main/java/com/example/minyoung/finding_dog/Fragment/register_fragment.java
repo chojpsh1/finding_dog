@@ -404,7 +404,6 @@ public class register_fragment extends Fragment {
             Date now = new Date();
             String filename = formatter.format(now) + ".jpg";*/
             String filename = user.getEmail();
-            
             //storage 주소와 폴더 파일명을 지정해 준다.
             StorageReference storageRef = firebaseStorage.getReferenceFromUrl("gs://chatting-ed067.appspot.com").child("UID").child(filename);
 
