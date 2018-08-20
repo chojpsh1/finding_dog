@@ -77,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         mFirebaseRemoteConfig=FirebaseRemoteConfig.getInstance();
-        loginActivity_edittext_id=(EditText)findViewById(R.id.loginActivity_edittext_id);
+        loginActivity_edittext_id = (EditText)findViewById(R.id.loginActivity_edittext_id);
         mAuth = FirebaseAuth.getInstance();
 
         String splash_background=mFirebaseRemoteConfig.getString("splash_background");
@@ -107,21 +107,20 @@ public class LoginActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                databaseReference2 = FirebaseDatabase.getInstance().getReference("Current_user");
-                databaseReference2.setValue(null);
-                user_email=loginActivity_edittext_id.getText().toString().split("@");
-                databaseReference2.child(user_email[0]).child("uid").setValue(loginActivity_edittext_id.getText().toString());
+                //databaseReference2 = FirebaseDatabase.getInstance().getReference("Current_user");
+                //databaseReference2.setValue(null);
+                //user_email=loginActivity_edittext_id.getText().toString().split("@");
+                //databaseReference2.child(user_email[0]).child("uid").setValue(loginActivity_edittext_id.getText().toString());
 
                 String email = ((EditText) findViewById(R.id.loginActivity_edittext_id)).getText().toString();
                 String password = ((EditText) findViewById(R.id.loginActivity_edittext_password)).getText().toString();
-                ///////////////////////////////////////////////////////////
+
                 // 자동 로그인
                 //Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 //startActivity(intent);
-                ///////////////////////////////////////////////////////////
+
                 // 로그인 정보 확인
                 SingIn(email, password);
-                ///////////////////////////////////////////////////////////
             }
         });
 
@@ -220,7 +219,6 @@ public class LoginActivity extends AppCompatActivity {
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 finish();
-                                FirebaseUser user = mAuth.getCurrentUser();
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Toast.makeText(LoginActivity.this, "아이디 또는 비밀번호가 잘못되었습니다.",

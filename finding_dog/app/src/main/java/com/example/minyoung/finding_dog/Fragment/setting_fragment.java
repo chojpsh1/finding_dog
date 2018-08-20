@@ -11,6 +11,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.minyoung.finding_dog.LoginActivity;
@@ -35,7 +36,7 @@ import java.util.Map;
 public class setting_fragment extends Fragment{
     DatabaseReference databaseReference;
     String current_uid;
-    EditText user_edit;
+    TextView user_edit;
     Button logout_btn;
     Switch sw;
     View view;
@@ -46,10 +47,10 @@ public class setting_fragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_setting, container, false);
         sw = (Switch) view.findViewById(R.id.switch1);
-        user_edit = (EditText) view.findViewById(R.id.user_edittext);
+        user_edit = (TextView) view.findViewById(R.id.user_edittext);
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
-        current_uid = user.getUid();
+        current_uid = user.getEmail().split("@")[0];
         logout_btn= (Button) view.findViewById(R.id.logout_btn);
 
         logout_btn.setOnClickListener(new View.OnClickListener()
@@ -89,27 +90,26 @@ public class setting_fragment extends Fragment{
         });
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference mConditionRef=database.child("User");
+        DatabaseReference mConditionRef = database.child("User");
 
-        mConditionRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        mConditionRef.child(user.getEmail().split("@")[0]).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterator<DataSnapshot> child = dataSnapshot.getChildren().iterator();
 
                 while(child.hasNext()) {
-                    DataSnapshot temp=child.next();
-                    String key=temp.getKey();
-                    if(key.equals(current_uid)){
-                        String str=temp.child("uid").getValue(String.class);
+                    DataSnapshot temp = child.next();
+                    String key = temp.getKey();
+                    if(key.equals("uid")){
+                        String str = temp.getValue(String.class);
                         user_edit.setText(str);
-                        String sw_state=temp.child("LoseState").getValue(String.class);
+
+                        String sw_state = dataSnapshot.child("LoseState").getValue(String.class);
                         if (sw_state.equals("True")){
                             sw.setChecked(true);
-                        }
-                        else{
+                        }else{
                             sw.setChecked(false);
                         }
-
                     }
                 }
             }

@@ -30,7 +30,7 @@
         android:src="@drawable/profile"
         android:id="@+id/profile"/>
 
-    <EditText
+    <TextView
         android:layout_alignBaseline="@+id/profile"
         android:id="@+id/user_edittext"
         android:layout_width="250dp"
