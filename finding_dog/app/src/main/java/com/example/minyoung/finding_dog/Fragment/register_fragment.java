@@ -42,6 +42,8 @@ import com.example.minyoung.finding_dog.MainActivity;
 import com.example.minyoung.finding_dog.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -87,6 +89,8 @@ public class register_fragment extends Fragment {
     FirebaseStorage firebaseStorage;
     StorageReference firebaseStorageRef;
     String current_uid;
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
 
     private static final String CLOUD_VISION_API_KEY = "AIzaSyAqGDvJlPf6xX7cX_4nMUpw01Ou8LywVlA";
     private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
@@ -113,6 +117,10 @@ public class register_fragment extends Fragment {
         // 스토리지 Instance 생성
         firebaseStorage = FirebaseStorage.getInstance();
         firebaseStorageRef = firebaseStorage.getReference();
+
+        // 로그인 계정정보
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
     }
 
     @Override
@@ -392,9 +400,11 @@ public class register_fragment extends Fragment {
             progressDialog.show();
 
             //Unique한 파일명을 만들자.
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMHH_mmss");
+            /* SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMHH_mmss");
             Date now = new Date();
-            String filename = formatter.format(now) + ".jpg";
+            String filename = formatter.format(now) + ".jpg";*/
+            String filename = user.getEmail();
+            
             //storage 주소와 폴더 파일명을 지정해 준다.
             StorageReference storageRef = firebaseStorage.getReferenceFromUrl("gs://chatting-ed067.appspot.com").child("UID").child(filename);
 
