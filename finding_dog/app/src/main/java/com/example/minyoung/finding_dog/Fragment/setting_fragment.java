@@ -48,9 +48,7 @@ public class setting_fragment extends Fragment{
         view = inflater.inflate(R.layout.fragment_setting, container, false);
         sw = (Switch) view.findViewById(R.id.switch1);
         user_edit = (TextView) view.findViewById(R.id.user_edittext);
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-        current_uid = user.getEmail().split("@")[0];
+
         logout_btn= (Button) view.findViewById(R.id.logout_btn);
 
         logout_btn.setOnClickListener(new View.OnClickListener()
