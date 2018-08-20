@@ -92,7 +92,7 @@ public class register_fragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseUser user;
 
-    private static final String CLOUD_VISION_API_KEY = "AIzaSyAqGDvJlPf6xX7cX_4nMUpw01Ou8LywVlA";
+    private static final String CLOUD_VISION_API_KEY = "";
     private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
     private static final String ANDROID_CERT_HEADER = "X-Android-Cert";
     private static final int MAX_LABEL_RESULTS = 5;
@@ -208,6 +208,7 @@ public class register_fragment extends Fragment {
                         childUpdates.put("/User/"+current_uid+"/species", species);
                         childUpdates.put("/User/"+current_uid+"/location", location);
                         childUpdates.put("/User/"+current_uid+"/feature", feature);
+                        childUpdates.put("/User/"+current_uid+"/LoseState", "False");
 
                         firebaseDatabaseRef.updateChildren(childUpdates);
 
