@@ -42,6 +42,8 @@ import com.example.minyoung.finding_dog.MainActivity;
 import com.example.minyoung.finding_dog.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -86,7 +88,9 @@ public class register_fragment extends Fragment {
     DatabaseReference firebaseDatabaseRef;
     FirebaseStorage firebaseStorage;
     StorageReference firebaseStorageRef;
-    String current_uid;
+    //String current_uid;
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
 
     private static final String CLOUD_VISION_API_KEY = "AIzaSyC9ucj6c1SJRSzRERLiheBrElqYfU76K_k";
     private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
@@ -113,6 +117,10 @@ public class register_fragment extends Fragment {
         // 스토리지 Instance 생성
         firebaseStorage = FirebaseStorage.getInstance();
         firebaseStorageRef = firebaseStorage.getReference();
+
+        // 로그인 계정정보
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
     }
 
     @Override
@@ -122,8 +130,8 @@ public class register_fragment extends Fragment {
 
         // EditText 생성
         editTextSpecies = view.findViewById(R.id.editTextSpecies);
-        editTextLocation = view.findViewById(R.id.editTextLocation);;
-        editTextFeature = view.findViewById(R.id.editTextFeature);;
+        editTextLocation = view.findViewById(R.id.editTextLocation);
+        editTextFeature = view.findViewById(R.id.editTextFeature);
 
         //Button 생성
         buttonSaveDog = view.findViewById(R.id.buttonSaveDog);
@@ -161,62 +169,26 @@ public class register_fragment extends Fragment {
     }
 
     private void saveDog() {
-        //현재 사용자를 불러옴
-        DatabaseReference database2 = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference mConditionRef2=database2.child("Current_user");
-        mConditionRef2.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Iterator<DataSnapshot> child = dataSnapshot.getChildren().iterator();
-                DataSnapshot temp=child.next();
-                String key=temp.getKey();
-                current_uid=key;
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+        // editText의 내용을 읽어옴
+        String species = editTextSpecies.getText().toString();
+        String location = editTextLocation.getText().toString();
+        String feature = editTextFeature.getText().toString();
 
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference mConditionRef=database.child("User");
-        mConditionRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Iterator<DataSnapshot> child = dataSnapshot.getChildren().iterator();
+        Map<String, Object> childUpdates = new HashMap<>();
+        String current_uid = user.getEmail().split("@")[0];
 
-                while(child.hasNext()) {
-                    DataSnapshot temp=child.next();
-                    String key=temp.getKey();
-                    if(key.equals(current_uid)){
-                        // editText의 내용을 읽어옴
-                        String species = editTextSpecies.getText().toString();
-                        String location = editTextLocation.getText().toString();
-                        String feature = editTextFeature.getText().toString();
-                        // Dog 클래스 객체생성
-//                        Dog dog = new Dog(species, location, feature);
-//                        Map<String, Object> postValues = dog.toMap();
-//                        Toast.makeText(mContext,"객체 생성",Toast.LENGTH_LONG).show();
-                        Map<String, Object> childUpdates = new HashMap<>();
-                        childUpdates.put("/User/"+current_uid+"/species", species);
-                        childUpdates.put("/User/"+current_uid+"/location", location);
-                        childUpdates.put("/User/"+current_uid+"/feature", feature);
-                        childUpdates.put("/User/"+current_uid+"/LoseState", "False");
+        childUpdates.put("/User/" +current_uid+"/species", species);
+        childUpdates.put("/User/"+current_uid+"/location", location);
+        childUpdates.put("/User/"+current_uid+"/feature", feature);
+        childUpdates.put("/User/"+current_uid+"/LoseState", "False");
 
-                        firebaseDatabaseRef.updateChildren(childUpdates);
+        firebaseDatabaseRef.updateChildren(childUpdates);
+        Toast.makeText(mContext,"저장 완료",Toast.LENGTH_LONG).show();
 
-                        Toast.makeText(mContext,"저장 완료",Toast.LENGTH_LONG).show();
-
-                        // 저장한 후 editText 초기화
-                        editTextSpecies.setText("");
-                        editTextLocation.setText("");
-                        editTextFeature.setText("");
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+        // 저장한 후 editText 초기화
+        editTextSpecies.setText("");
+        editTextLocation.setText("");
+        editTextFeature.setText("");
     }
 
     //결과 처리
@@ -393,9 +365,10 @@ public class register_fragment extends Fragment {
             progressDialog.show();
 
             //Unique한 파일명을 만들자.
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMHH_mmss");
+            /* SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMHH_mmss");
             Date now = new Date();
-            String filename = formatter.format(now) + ".jpg";
+            String filename = formatter.format(now) + ".jpg";*/
+            String filename = user.getEmail();
             //storage 주소와 폴더 파일명을 지정해 준다.
             StorageReference storageRef = firebaseStorage.getReferenceFromUrl("gs://chatting-ed067.appspot.com").child("UID").child(filename);
 
