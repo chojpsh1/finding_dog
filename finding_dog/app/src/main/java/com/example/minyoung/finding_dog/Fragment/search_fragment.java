@@ -170,6 +170,7 @@ public class search_fragment extends Fragment {
                         dog_species.add(temp.child("species").getValue().toString());
                         dog_location.add(temp.child("location").getValue().toString());
                         dog_feature.add(temp.child("feature").getValue().toString());
+                        temp.child("uid").getValue().toString();
                     }
                 }
                 /*Hard Coding*/
