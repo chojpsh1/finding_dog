@@ -175,8 +175,8 @@ public class search_fragment extends Fragment {
                         dog_feature.add(temp.child("feature").getValue().toString());
                     }
                 }
-                for(int i=0;i<dog_species.size();i++) {
-                    adapter.addItem(new SingerItem2(dog_species.get(i), dog_location.get(i), dog_feature.get(i), R.drawable.img1));
+                for(int i = 0; i < dog_species.size(); i++) {
+                    adapter.addItem(new SingerItem2(dog_species.get(i), dog_location.get(i), dog_feature.get(i), i + 2131230871));
                 }
                 listView.setAdapter(adapter);
             }
@@ -342,8 +342,8 @@ public class search_fragment extends Fragment {
                             }
 
                         }
-                        for(int i=0;i<dog_species2.size();i++) {
-                            new_adapter.addItem(new SingerItem2(dog_species2.get(i), dog_location2.get(i), dog_feature2.get(i), R.drawable.img1));
+                        for(int i = 0; i < dog_species2.size(); i++) {
+                            new_adapter.addItem(new SingerItem2(dog_species2.get(i), dog_location2.get(i), dog_feature2.get(i), i + 2131230871));
                         }
                         listView.setAdapter(new_adapter);
                     }
