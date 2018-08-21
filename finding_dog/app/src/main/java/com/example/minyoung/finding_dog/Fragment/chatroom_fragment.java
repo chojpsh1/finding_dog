@@ -1,6 +1,9 @@
 package com.example.minyoung.finding_dog.Fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -48,6 +51,8 @@ import com.google.firebase.storage.UploadTask;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -57,6 +62,7 @@ public class chatroom_fragment extends Fragment {
     private EditText chatText;
     private Button buttonSend;
     private Button buttonSendPicture;
+    private TextView back_fragment;
 
     private Button buttonPicture;
     private Button buttonPictureCancel;
@@ -82,6 +88,10 @@ public class chatroom_fragment extends Fragment {
 
     public String filename;
 
+    public StorageReference storageRef;
+
+    public LinkedList receive_msg;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chatroom, container, false);
@@ -106,7 +116,19 @@ public class chatroom_fragment extends Fragment {
         chatArrayAdapter = new ChatArrayAdapter(view.getContext(), R.layout.chatmessage);
         listView.setAdapter(chatArrayAdapter);
 
-        textView.setText(myID + "와 " + yourID + "의 채팅방");
+        textView.setText("To " + yourID);
+
+        back_fragment = view.findViewById(R.id.back_fragment);
+        back_fragment.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fm.beginTransaction();
+                Fragment chat = new chatting_fragment();
+
+                fragmentTransaction.replace(R.id.mainactivity_framelayout, chat);
+                fragmentTransaction.commit();
+            }
+        });
 
         // sqlite DB Create and Open
         mDbOpenHelper = new DbOpenHelper(view.getContext());
@@ -114,6 +136,7 @@ public class chatroom_fragment extends Fragment {
         mDbOpenHelper.create(yourID);
 
         updateChatMessage();
+        receive_msg = new LinkedList();
 
         //파이어 베이스 권한
         databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -121,11 +144,12 @@ public class chatroom_fragment extends Fragment {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.hasChild("image")){
-                    Log.i("@@@@@@@@@@@@@@@@@@@@ : ", dataSnapshot.child("image").getValue().toString());
+                    Log.i("@@@@@@@@@@@@@ image : ", dataSnapshot.child("image").getValue().toString());
                     receiveChatImage(dataSnapshot.child("image").getValue().toString());
                     databaseReference.child("chat").child(myID).child(yourID).child(dataSnapshot.getKey()).setValue(null);
                 }
                 else {
+                    Log.i("@@@@@@@@@@@@@ chat : ", dataSnapshot.getValue().toString());
                     receiveChatMessage(dataSnapshot.getValue().toString());
                     databaseReference.child("chat").child(myID).child(yourID).child(dataSnapshot.getKey()).setValue(null);
                 }
@@ -220,17 +244,6 @@ public class chatroom_fragment extends Fragment {
         return view;
     }
 
-    //액션버튼을 클릭했을때의 동작
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -253,10 +266,54 @@ public class chatroom_fragment extends Fragment {
         }
     }
 
+
+    public void reconnectingFirebase(){
+        databaseReference.child("chat").child(myID).child(yourID).removeEventListener(childEventListener);
+
+        //파이어 베이스 권한
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if(dataSnapshot.hasChild("image")){
+                    Log.i("@@@@@@@@@@@@@ image : ", dataSnapshot.child("image").getValue().toString());
+                    receiveChatImage(dataSnapshot.child("image").getValue().toString());
+                    databaseReference.child("chat").child(myID).child(yourID).child(dataSnapshot.getKey()).setValue(null);
+                }
+                else {
+                    Log.i("@@@@@@@@@@@@@ chat : ", dataSnapshot.getValue().toString());
+                    receiveChatMessage(dataSnapshot.getValue().toString());
+                    databaseReference.child("chat").child(myID).child(yourID).child(dataSnapshot.getKey()).setValue(null);
+                }
+            }
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        //디비에 올라가면 채팅 갱신
+        databaseReference.child("chat").child(myID).child(yourID).addChildEventListener(childEventListener);
+    }
+
     @Override
     public void onPause() {
         super.onPause();
-        databaseReference.child("chat").child(myID).child(yourID).removeEventListener(childEventListener);
 
         mDbOpenHelper.close();
     }
@@ -304,7 +361,7 @@ public class chatroom_fragment extends Fragment {
         Date now = new Date();
         filename = myID + formatter.format(now)  + yourID + ".png";
         //storage 주소와 폴더 파일명을 지정해 준다.
-        StorageReference storageRef = storage.getReferenceFromUrl("gs://chatting-ed067.appspot.com").child("images").child(filename);
+        StorageReference upload_storageRef = storage.getReferenceFromUrl("gs://chatting-ed067.appspot.com").child("images").child(filename);
 
         final Context mContext = this.getActivity();
 
@@ -312,12 +369,14 @@ public class chatroom_fragment extends Fragment {
         progressDialog.setTitle("전송중...");
         progressDialog.show();
 
-        storageRef.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        upload_storageRef.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 progressDialog.dismiss(); //업로드 진행 Dialog 상자 닫기
                 Toast.makeText(mContext, "전송 완료!", Toast.LENGTH_LONG).show();
                 databaseReference.child("chat").child(yourID).child(myID).push().child("image").setValue(filename);
+
+                reconnectingFirebase();
             }
         })
                 //실패시
@@ -350,20 +409,23 @@ public class chatroom_fragment extends Fragment {
         buttonSend.setVisibility(View.VISIBLE);
         buttonSendPicture.setVisibility(View.GONE);
 
+
         return true;
     }
 
     private boolean receiveChatImage(String img){
-        StorageReference storageRef = storage.getReferenceFromUrl("gs://chatting-ed067.appspot.com");
-        StorageReference islandRef = storageRef.child("images/" + img);
+        storageRef = storage.getReferenceFromUrl("gs://chatting-ed067.appspot.com");
+        StorageReference download_storageRef = storageRef.child("images/" + img);
 
         final long ONE_MEGABYTE = 1024 * 1024;
-        islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        download_storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length) ;
                 chatArrayAdapter.add(new ChatMessage(true, bitmap));
                 mDbOpenHelper.insertColumn(yourID, 1, 0, "picture", null, bitmap);
+
+                reconnectingFirebase();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -372,7 +434,7 @@ public class chatroom_fragment extends Fragment {
             }
         });
 
-        islandRef.delete();
+        download_storageRef.delete();
 
         return true;
     }
