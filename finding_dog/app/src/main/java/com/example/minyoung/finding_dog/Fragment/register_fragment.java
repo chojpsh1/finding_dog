@@ -88,11 +88,10 @@ public class register_fragment extends Fragment {
     DatabaseReference firebaseDatabaseRef;
     FirebaseStorage firebaseStorage;
     StorageReference firebaseStorageRef;
-    //String current_uid;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
 
-    private static final String CLOUD_VISION_API_KEY = "AIzaSyC9ucj6c1SJRSzRERLiheBrElqYfU76K_k";
+    private static final String CLOUD_VISION_API_KEY = "AIzaSyD_NGKmBcL37cg9ivSMUt0BWN8LiZb-n5A";
     private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
     private static final String ANDROID_CERT_HEADER = "X-Android-Cert";
     private static final int MAX_LABEL_RESULTS = 5;

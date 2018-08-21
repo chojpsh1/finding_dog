@@ -79,10 +79,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class search_fragment extends Fragment {
     Context mContext;
-    Uri filePath;
-    ImageView imageViewUpload;
     View view;
-    EditText editText;
     static ListView listView;
     SingerAdapter adapter;
     ArrayList<String> dog_species;
@@ -104,7 +101,7 @@ public class search_fragment extends Fragment {
     private static final int GALLERY_PERMISSIONS_REQUEST = 0;
     private static final int GALLERY_IMAGE_REQUEST = 1;
     private static final int MAX_DIMENSION = 1200;
-    private static final String CLOUD_VISION_API_KEY = "AIzaSyC9ucj6c1SJRSzRERLiheBrElqYfU76K_k";
+    private static final String CLOUD_VISION_API_KEY = "AIzaSyD_NGKmBcL37cg9ivSMUt0BWN8LiZb-n5A";
     private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
     private static final String ANDROID_CERT_HEADER = "X-Android-Cert";
     private static final int MAX_LABEL_RESULTS = 5;
@@ -175,6 +172,7 @@ public class search_fragment extends Fragment {
                         dog_feature.add(temp.child("feature").getValue().toString());
                     }
                 }
+                /*Hard Coding*/
                 for(int i = 0; i < dog_species.size(); i++) {
                     adapter.addItem(new SingerItem2(dog_species.get(i), dog_location.get(i), dog_feature.get(i), i + 2131230871));
                 }
@@ -342,8 +340,19 @@ public class search_fragment extends Fragment {
                             }
 
                         }
+                        /*Hard Coding*/
+                        int temp = 2131230873;
                         for(int i = 0; i < dog_species2.size(); i++) {
-                            new_adapter.addItem(new SingerItem2(dog_species2.get(i), dog_location2.get(i), dog_feature2.get(i), i + 2131230871));
+//                            Log.e("images",String.valueOf(R.drawable.dog11));
+//                            Log.e("images",String.valueOf(R.drawable.dog12));
+//                            Log.e("images",String.valueOf(R.drawable.dog13));
+//                            Log.e("images",String.valueOf(R.drawable.dog14));
+//                            Log.e("images",String.valueOf(R.drawable.dog15));
+//                            Log.e("images",String.valueOf(R.drawable.dog16));
+                            /*Hard Coding*/
+                            new_adapter.addItem(new SingerItem2(dog_species2.get(i), dog_location2.get(i), dog_feature2.get(i), temp));
+                            /*Hard Coding*/
+                            temp += 2;
                         }
                         listView.setAdapter(new_adapter);
                     }

@@ -58,7 +58,6 @@ public class setting_fragment extends Fragment{
             public void onClick(View v)
             {
                 //Start your activity here
-                FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(view.getContext(), LoginActivity.class));
                 finish();
             }
