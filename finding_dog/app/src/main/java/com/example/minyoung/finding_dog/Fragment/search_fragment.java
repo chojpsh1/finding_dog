@@ -33,11 +33,15 @@ import com.example.minyoung.finding_dog.SingerItem2;
 import com.example.minyoung.finding_dog.SingerItemView2;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -59,6 +63,7 @@ import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
@@ -93,13 +98,17 @@ public class search_fragment extends Fragment {
     static ArrayList<String> dog_species2;
     static ArrayList<String> dog_location2;
     static ArrayList<String> dog_feature2;
-
+    static ArrayList<Uri> image_uri;
+    static ArrayList<String> image_user;
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference firebaseDatabaseRef;
 
-    FirebaseStorage firebaseStorage;
+    static FirebaseStorage firebaseStorage;
     StorageReference firebaseStorageRef;
+
+    private FirebaseAuth mAuth;
+    private static FirebaseUser user;
 
     private static final int GALLERY_PERMISSIONS_REQUEST = 0;
     private static final int GALLERY_IMAGE_REQUEST = 1;
@@ -119,10 +128,13 @@ public class search_fragment extends Fragment {
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseDatabaseRef = firebaseDatabase.getReference();
 
-
         // 스토리지 Instance 생성
         firebaseStorage = FirebaseStorage.getInstance();
         firebaseStorageRef = firebaseStorage.getReference();
+
+        // 로그인 계정정보
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
     }
 
     @Override
@@ -134,7 +146,8 @@ public class search_fragment extends Fragment {
         dog_species = new ArrayList<String>();
         dog_location = new ArrayList<String>();
         dog_feature = new ArrayList<String>();
-
+        image_uri = new ArrayList<Uri>();
+        image_user = new ArrayList<String>();
 
 
         Button search = (Button) view.findViewById(R.id.search_btn);
@@ -150,8 +163,6 @@ public class search_fragment extends Fragment {
                     intent.setAction(Intent.ACTION_GET_CONTENT);
                     startActivityForResult(Intent.createChooser(intent, "Select a photo"),
                             GALLERY_IMAGE_REQUEST);
-
-
                 }
             }
         });
@@ -173,10 +184,34 @@ public class search_fragment extends Fragment {
                         dog_species.add(temp.child("species").getValue().toString());
                         dog_location.add(temp.child("location").getValue().toString());
                         dog_feature.add(temp.child("feature").getValue().toString());
+                        image_user.add(temp.child("uid").getValue().toString());
                     }
 
                 }
-                for(int i=0;i<dog_species.size();i++) {
+                for(int i = 0; i < dog_species.size(); i++) {
+
+                    StorageReference storageRef = firebaseStorage.getReferenceFromUrl("gs://chatting-ed067.appspot.com").child("UID").child(image_user.get(i).toString());
+                    File localFile = null;
+                    try {
+                        localFile = File.createTempFile(image_user.get(i).toString(), "jpg");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    storageRef.getFile(localFile)
+                            .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                    // Successfully downloaded data to local file
+                                    // ...
+                                    long a = taskSnapshot.getBytesTransferred();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle failed download
+                            // ...
+                        }
+                    });
                     adapter.addItem(new SingerItem2(dog_species.get(i), dog_location.get(i), dog_feature.get(i), R.drawable.img1));
                 }
                 listView.setAdapter(adapter);
@@ -353,8 +388,27 @@ public class search_fragment extends Fragment {
                             }
 
                         }
-                        for(int i=0;i<dog_species2.size();i++) {
-                            new_adapter.addItem(new SingerItem2(dog_species2.get(i), dog_location2.get(i), dog_feature2.get(i), R.drawable.img1));
+                        for(int i = 0; i < dog_species2.size(); i++) {
+                            StorageReference storageReference = firebaseStorage.getReferenceFromUrl("gs://chatting-ed067.appspot.com");
+                            //다운로드할 파일을 가르키는 참조 만들기
+                            StorageReference pathReference = storageReference.child("UID").child(user.getEmail() + ".JPEG");
+
+                            //Url을 다운받기
+                            final int finalI = i;
+                            pathReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Toast.makeText(getApplicationContext(), "주인 찾기 완료 : "+ uri, Toast.LENGTH_SHORT).show();
+                                    Log.e("search_fragment", "주인 찾기 완료");
+                                    new_adapter.addItem(new SingerItem2(dog_species2.get(finalI), dog_location2.get(finalI), dog_feature2.get(finalI), R.drawable.profile));
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.e("search_fragment", "주인 찾기 실패");
+                                    Toast.makeText(getApplicationContext(), "주인 찾기 실패", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
                         listView.setAdapter(new_adapter);
                     }
@@ -511,15 +565,24 @@ public class search_fragment extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup viewGroup) {
-            SingerItemView2 view = new SingerItemView2(getApplicationContext());
+            final Context context = viewGroup.getContext();
+
+            final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            convertView = inflater.inflate(R.layout.singer_item, viewGroup, false);
 
             SingerItem2 item = items.get(position);
-            view.setName(item.getName());
-            view.setLocation(item.getLocation());
-            view.setFeature(item.getFeature());
-            view.setImage(item.getResId());
 
-            return view;
+            TextView textView1 = convertView.findViewById(R.id.dog_species);
+            textView1.setText(item.getName());
+            TextView textView2 = convertView.findViewById(R.id.dog_location);
+            textView2.setText(item.getLocation());
+            TextView textView3 = convertView.findViewById(R.id.dog_feature);
+            textView3.setText(item.getFeature());
+            ImageView imageView = convertView.findViewById(R.id.imageView);
+            imageView.setImageURI(image_uri.get(position));
+
+            return convertView;
         }
     }
 
