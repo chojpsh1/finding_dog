@@ -2,6 +2,8 @@ package com.example.minyoung.finding_dog.Fragment;
 
 import android.Manifest;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +35,8 @@ import com.example.minyoung.finding_dog.SingerItem2;
 import com.example.minyoung.finding_dog.SingerItemView2;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -85,12 +89,13 @@ public class search_fragment extends Fragment {
     ArrayList<String> dog_species;
     ArrayList<String> dog_location;
     ArrayList<String> dog_feature;
+    ArrayList<String> dog_uid;
 
     static SingerAdapter new_adapter;
     static ArrayList<String> dog_species2;
     static ArrayList<String> dog_location2;
     static ArrayList<String> dog_feature2;
-
+    static ArrayList<String> dog_uid2;
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference firebaseDatabaseRef;
@@ -131,7 +136,7 @@ public class search_fragment extends Fragment {
         dog_species = new ArrayList<String>();
         dog_location = new ArrayList<String>();
         dog_feature = new ArrayList<String>();
-
+        dog_uid = new ArrayList<String>();
 
 
         Button search = (Button) view.findViewById(R.id.search_btn);
@@ -170,11 +175,12 @@ public class search_fragment extends Fragment {
                         dog_species.add(temp.child("species").getValue().toString());
                         dog_location.add(temp.child("location").getValue().toString());
                         dog_feature.add(temp.child("feature").getValue().toString());
+                        dog_uid.add(temp.child("uid").getValue().toString());
                     }
                 }
                 /*Hard Coding*/
                 for(int i = 0; i < dog_species.size(); i++) {
-                    adapter.addItem(new SingerItem2(dog_species.get(i), dog_location.get(i), dog_feature.get(i), i + 2131230871));
+                    adapter.addItem(new SingerItem2(dog_species.get(i), dog_location.get(i), dog_feature.get(i), i + 2131230871, dog_uid.get(i)));
                 }
                 listView.setAdapter(adapter);
             }
@@ -284,7 +290,7 @@ public class search_fragment extends Fragment {
 
         return annotateRequest;
     }
-    private static class LableDetectionTask extends AsyncTask<Object, Void, String> {
+    private class LableDetectionTask extends AsyncTask<Object, Void, String> {
         private final WeakReference<MainActivity> mActivityWeakReference;
         private Vision.Images.Annotate mRequest;
 
@@ -314,6 +320,8 @@ public class search_fragment extends Fragment {
             dog_species2=new ArrayList<String>();
             dog_location2=new ArrayList<String>();
             dog_feature2=new ArrayList<String>();
+            dog_uid2 = new ArrayList<String>();
+
             new_adapter = new SingerAdapter();
 
             if (activity != null && !activity.isFinishing()) {
@@ -337,6 +345,7 @@ public class search_fragment extends Fragment {
                                 dog_species2.add(temp.child("species").getValue().toString());
                                 dog_location2.add(temp.child("location").getValue().toString());
                                 dog_feature2.add(temp.child("feature").getValue().toString());
+                                dog_uid2.add(temp.child("uid").getValue().toString());
                             }
 
                         }
@@ -350,7 +359,7 @@ public class search_fragment extends Fragment {
 //                            Log.e("images",String.valueOf(R.drawable.dog15));
 //                            Log.e("images",String.valueOf(R.drawable.dog16));
                             /*Hard Coding*/
-                            new_adapter.addItem(new SingerItem2(dog_species2.get(i), dog_location2.get(i), dog_feature2.get(i), temp));
+                            new_adapter.addItem(new SingerItem2(dog_species2.get(i), dog_location2.get(i), dog_feature2.get(i), temp, dog_uid2.get(i)));
                             /*Hard Coding*/
                             temp += 2;
                         }
@@ -437,7 +446,7 @@ public class search_fragment extends Fragment {
         return message.toString();
     }
 
-    static class SingerAdapter extends BaseAdapter {
+    public class SingerAdapter extends BaseAdapter {
         ArrayList<SingerItem2> items = new ArrayList<SingerItem2>();
 
         @Override
@@ -460,7 +469,7 @@ public class search_fragment extends Fragment {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup viewGroup) {
+        public View getView(final int position, View convertView, ViewGroup viewGroup) {
             SingerItemView2 view = new SingerItemView2(getApplicationContext());
 
             SingerItem2 item = items.get(position);
@@ -469,8 +478,35 @@ public class search_fragment extends Fragment {
             view.setFeature(item.getFeature());
             view.setImage(item.getResId());
 
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    switchFragment(items.get(position).getUid());
+                }
+            });
             return view;
         }
     }
 
+    public void switchFragment(String id) {
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+
+        Fragment chatroom = new chatroom_fragment();
+
+        FirebaseAuth mAuth;
+        FirebaseUser user;
+
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+
+        Bundle bundle = new Bundle(2);
+        bundle.putString("myID", user.getEmail());
+        bundle.putString("yourID", id);
+        chatroom.setArguments(bundle);
+
+        fragmentTransaction.replace(R.id.mainactivity_framelayout, chatroom);
+
+        fragmentTransaction.commit();
+    }
 }

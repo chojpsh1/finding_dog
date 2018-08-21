@@ -110,8 +110,8 @@ public class chatroom_fragment extends Fragment {
         chatImg = view.findViewById(R.id.chat_img);
 
         textView = (TextView) view.findViewById(R.id.chat_partner);
-        myID = getArguments().getString("myID");
-        yourID = getArguments().getString("yourID");
+        myID = getArguments().getString("myID").replace("@","").replace(".","");
+        yourID = getArguments().getString("yourID").replace("@","").replace(".","");
 
         chatArrayAdapter = new ChatArrayAdapter(view.getContext(), R.layout.chatmessage);
         listView.setAdapter(chatArrayAdapter);
