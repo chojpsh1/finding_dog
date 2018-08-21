@@ -4,13 +4,16 @@ public class SingerItem2 {
     String name;
     String feature;
     String location;
+    String uid;
+
     int resId;
 
-    public SingerItem2(String name, String location, String feature, int resId){
+    public SingerItem2(String name, String location, String feature, int resId, String uid){
         this.name = name;
         this.location = location;
         this.feature = feature;
         this.resId = resId;
+        this.uid = uid;
     }
 
     public String getFeature(){return feature;}
@@ -21,4 +24,11 @@ public class SingerItem2 {
     public void setLocation(String location){this.location = location;}
     public String getName(){return name;}
     public void setName(String name){this.name = name;}
+
+    public String getUid(){
+        return this.uid;
+    }
+    public void setUid(String uid){
+        this.uid = uid;
+    }
 }

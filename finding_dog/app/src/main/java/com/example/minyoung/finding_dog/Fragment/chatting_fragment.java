@@ -1,5 +1,6 @@
 package com.example.minyoung.finding_dog.Fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -46,12 +47,14 @@ public class chatting_fragment extends Fragment{
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
 
         Fragment chatroom = new chatroom_fragment();
+
         Bundle bundle = new Bundle(2);
         bundle.putString("myID", chat_my_id.getText().toString());
         bundle.putString("yourID", chat_your_id.getText().toString());
         chatroom.setArguments(bundle);
 
         fragmentTransaction.replace(R.id.mainactivity_framelayout, chatroom);
+
         fragmentTransaction.commit();
     }
 }
