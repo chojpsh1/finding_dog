@@ -7,43 +7,43 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/background_4">
 
         <Button
             android:layout_marginLeft="20dp"
             android:id="@+id/search_btn"
-            android:layout_marginTop="6dp"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:background="@drawable/camera_3" />
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/camera_2" />
 
         <TextView
+
+            android:typeface="monospace"
             android:id="@+id/species"
             android:layout_marginLeft="10dp"
-            android:layout_width="240dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginRight="10dp"
+            android:layout_width="250dp"
+            android:layout_height="40dp"
             android:background="@drawable/edge"
-            android:ems="10"
-            android:text="      사진으로 주인 찾기  "
+            android:text="사진으로 주인 찾기"
+            android:textAlignment="center"
             android:textColor="#000000"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="20sp" />
 
         <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_marginRight="20dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/search_dog" />
     </LinearLayout>
 
-    <View style="@style/Divider"
-        android:layout_marginTop="8dp"
-        android:layout_below="@+id/setting"
-        android:id="@+id/line2"/>
 
     <ListView
+        android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/listView"

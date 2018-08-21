@@ -222,16 +222,6 @@ public class search_fragment extends Fragment {
 
         });
 
-        //*********리스트 선택 했을 때 채팅 연결하기*********//
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                SingerItem2 item = (SingerItem2) adapter.getItem(position);
-
-                Toast.makeText(getApplicationContext(),"선택 : "+item.getName(), Toast.LENGTH_LONG).show();
-            }
-        });
-
         return view;
     }
 

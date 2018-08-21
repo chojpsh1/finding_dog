@@ -422,7 +422,7 @@ public class register_fragment extends Fragment {
                         break;
                     default:
                         message.append(String.format(Locale.US, "%s", label.getDescription()));
-                        message.append("\n");
+                        message.append(" / ");
                 }
             }
         } else {

@@ -2,16 +2,26 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="28dp"
     android:orientation="vertical">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="반려견 등록"
-        android:textSize="48dp"
-        android:layout_gravity="center"
-        />
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:background="@drawable/background_4">
+        <TextView
+            android:textColor="#FFFFFF"
+            android:typeface="monospace"
+            android:layout_width="180dp"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:text="반려견 등록"
+            android:textSize="30dp"
+
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -73,23 +83,31 @@
         android:layout_gravity="center">
 
         <Button
+            android:background="#000000"
+            android:textColor="#FFFFFF"
             android:id="@+id/buttonSaveDog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="강아지 정보 저장" />
 
         <LinearLayout
+            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="center">
             <Button
+                android:background="#000000"
+                android:textColor="#FFFFFF"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/buttonChoose"
                 android:text="강아지 사진 선택" />
 
             <Button
+                android:layout_marginLeft="10dp"
+                android:background="#000000"
+                android:textColor="#FFFFFF"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonUpload"

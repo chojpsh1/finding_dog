@@ -1,5 +1,4 @@
 package com.example.minyoung.finding_dog.Fragment;
-
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
