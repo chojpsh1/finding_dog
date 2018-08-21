@@ -48,7 +48,9 @@ import com.kakao.util.helper.log.Logger;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
     private Button login;
@@ -60,7 +62,6 @@ public class LoginActivity extends AppCompatActivity {
     private DatabaseReference databaseReference2;
     private EditText loginActivity_edittext_id;
     String user_email[];
-    private FirebaseAuth mAuth;
 
     //페이스북 로그인을 위한 변수
     private static final String TAG = "LoginActivity";
@@ -71,6 +72,9 @@ public class LoginActivity extends AppCompatActivity {
 //    private Button btn_custom_login;
     private com.kakao.usermgmt.LoginButton btn_kakao;
     private SessionCallback callback;
+
+    private FirebaseAuth mAuth;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,9 +217,11 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+
                                 // Sign in success, update UI with the signed-in user's information
                                 Toast.makeText(LoginActivity.this, "로그인 성공",
                                         Toast.LENGTH_SHORT).show();
+
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 finish();
