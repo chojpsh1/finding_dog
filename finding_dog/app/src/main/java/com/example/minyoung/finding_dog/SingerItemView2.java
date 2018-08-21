@@ -2,6 +2,7 @@ package com.example.minyoung.finding_dog;
 
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
@@ -41,6 +42,6 @@ public class SingerItemView2 extends LinearLayout {
     public void setName(String name) { textView.setText(name); }
     public void setLocation(String location) { textView2.setText(location); }
     public void setFeature(String feature) { textView3.setText(feature); }
-    public void setImage(int resId) { imageView.setImageResource(resId); }
+    public void setImage(Uri uri) { imageView.setImageURI(uri); }
 
 }

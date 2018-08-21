@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -33,15 +34,11 @@ import com.example.minyoung.finding_dog.SingerItem2;
 import com.example.minyoung.finding_dog.SingerItemView2;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -63,7 +60,6 @@ import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
@@ -85,9 +81,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 public class search_fragment extends Fragment {
     Context mContext;
     Uri filePath;
-    ImageView imageViewUpload;
     View view;
-    EditText editText;
     static ListView listView;
     SingerAdapter adapter;
     ArrayList<String> dog_species;
@@ -98,17 +92,15 @@ public class search_fragment extends Fragment {
     static ArrayList<String> dog_species2;
     static ArrayList<String> dog_location2;
     static ArrayList<String> dog_feature2;
-    static ArrayList<Uri> image_uri;
-    static ArrayList<String> image_user;
+    static ArrayList<String> dog_uid2;
+    static ArrayList<Uri> dog_bitmap;
+
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference firebaseDatabaseRef;
 
-    static FirebaseStorage firebaseStorage;
+    FirebaseStorage firebaseStorage;
     StorageReference firebaseStorageRef;
-
-    private FirebaseAuth mAuth;
-    private static FirebaseUser user;
 
     private static final int GALLERY_PERMISSIONS_REQUEST = 0;
     private static final int GALLERY_IMAGE_REQUEST = 1;
@@ -131,10 +123,6 @@ public class search_fragment extends Fragment {
         // 스토리지 Instance 생성
         firebaseStorage = FirebaseStorage.getInstance();
         firebaseStorageRef = firebaseStorage.getReference();
-
-        // 로그인 계정정보
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
     }
 
     @Override
@@ -146,9 +134,8 @@ public class search_fragment extends Fragment {
         dog_species = new ArrayList<String>();
         dog_location = new ArrayList<String>();
         dog_feature = new ArrayList<String>();
-        image_uri = new ArrayList<Uri>();
-        image_user = new ArrayList<String>();
-
+        dog_uid2 = new ArrayList<String>();
+        dog_bitmap = new ArrayList<Uri>();
 
         Button search = (Button) view.findViewById(R.id.search_btn);
         search.setOnClickListener(new View.OnClickListener()
@@ -184,37 +171,16 @@ public class search_fragment extends Fragment {
                         dog_species.add(temp.child("species").getValue().toString());
                         dog_location.add(temp.child("location").getValue().toString());
                         dog_feature.add(temp.child("feature").getValue().toString());
-                        image_user.add(temp.child("uid").getValue().toString());
+                        String uid = temp.child("uid").getValue().toString().split("@")[0];
+                        dog_uid2.add(uid);
+                        readImage();
                     }
 
                 }
-                for(int i = 0; i < dog_species.size(); i++) {
-
-                    StorageReference storageRef = firebaseStorage.getReferenceFromUrl("gs://chatting-ed067.appspot.com").child("UID").child(image_user.get(i).toString());
-                    File localFile = null;
-                    try {
-                        localFile = File.createTempFile(image_user.get(i).toString(), "jpg");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    storageRef.getFile(localFile)
-                            .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                    // Successfully downloaded data to local file
-                                    // ...
-                                    long a = taskSnapshot.getBytesTransferred();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            // Handle failed download
-                            // ...
-                        }
-                    });
-                    adapter.addItem(new SingerItem2(dog_species.get(i), dog_location.get(i), dog_feature.get(i), R.drawable.img1));
-                }
-                listView.setAdapter(adapter);
+//                for(int i=0;i<dog_species.size();i++) {
+//                    adapter.addItem(new SingerItem2(dog_species.get(i), dog_location.get(i), dog_feature.get(i), R.drawable.img1));
+//                }
+//                listView.setAdapter(adapter);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -352,6 +318,9 @@ public class search_fragment extends Fragment {
             dog_species2=new ArrayList<String>();
             dog_location2=new ArrayList<String>();
             dog_feature2=new ArrayList<String>();
+            dog_uid2=new ArrayList<>();
+            dog_bitmap = new ArrayList<Uri>();
+
             new_adapter = new SingerAdapter();
 
             if (activity != null && !activity.isFinishing()) {
@@ -375,30 +344,13 @@ public class search_fragment extends Fragment {
                                 dog_species2.add(temp.child("species").getValue().toString());
                                 dog_location2.add(temp.child("location").getValue().toString());
                                 dog_feature2.add(temp.child("feature").getValue().toString());
+                                String uid = temp.child("uid").getValue().toString().split("@")[0];
+                                dog_uid2.add(uid);
                             }
 
                         }
-                        for(int i = 0; i < dog_species2.size(); i++) {
-                            StorageReference storageReference = firebaseStorage.getReferenceFromUrl("gs://chatting-ed067.appspot.com");
-                            //다운로드할 파일을 가르키는 참조 만들기
-                            StorageReference pathReference = storageReference.child("UID").child(user.getEmail() + ".JPEG");
-
-                            //Url을 다운받기
-                            final int finalI = i;
-                            pathReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    Toast.makeText(getApplicationContext(), "주인 찾기 완료 : "+ uri, Toast.LENGTH_SHORT).show();
-                                    Log.e("search_fragment", "주인 찾기 완료");
-                                    new_adapter.addItem(new SingerItem2(dog_species2.get(finalI), dog_location2.get(finalI), dog_feature2.get(finalI), R.drawable.profile));
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.e("search_fragment", "주인 찾기 실패");
-                                    Toast.makeText(getApplicationContext(), "주인 찾기 실패", Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                        for(int i=0;i<dog_species2.size();i++) {
+//                            new_adapter.addItem(new SingerItem2(dog_species2.get(i), dog_location2.get(i), dog_feature2.get(i), R.drawable.img1));
                         }
                         listView.setAdapter(new_adapter);
                     }
@@ -419,6 +371,33 @@ public class search_fragment extends Fragment {
                 });
             }
         }
+    }
+
+    public void readImage (){
+        StorageReference storageRef = firebaseStorageRef.child("UID/"+dog_uid2.remove(0)+".jpg");
+
+        storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                // Got the download URL for 'users/me/profile.png'
+                dog_bitmap.add(uri);
+                for(int i=0;i<dog_species.size();i++) {
+                    adapter.addItem(new SingerItem2(dog_species.get(i), dog_location.get(i), dog_feature.get(i), uri));
+                }
+                listView.setAdapter(adapter);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+                Log.e("TAG", exception.toString());
+            }
+        });
+    }
+
+    public Bitmap byteArrayToBitmap( byte[] $byteArray ) {
+        Bitmap bitmap = BitmapFactory.decodeByteArray( $byteArray, 0, $byteArray.length ) ;
+        return bitmap ;
     }
 
     private void callCloudVision(final Bitmap bitmap) {
@@ -453,54 +432,6 @@ public class search_fragment extends Fragment {
             resizedWidth = maxDimension;
         }
         return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
-    }
-
-    //upload the file
-    private void uploadFile() {
-        //업로드할 파일이 있으면 수행
-        if (filePath != null) {
-            //업로드 진행 Dialog 보이기
-            final ProgressDialog progressDialog = new ProgressDialog(mContext);
-            progressDialog.setTitle("업로드중...");
-            progressDialog.show();
-
-            //Unique한 파일명을 만들자.
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMHH_mmss");
-            Date now = new Date();
-            String filename = formatter.format(now) + ".jpg";
-            //storage 주소와 폴더 파일명을 지정해 준다.
-            StorageReference storageRef = firebaseStorage.getReferenceFromUrl("gs://chatting-ed067.appspot.com").child("UID").child(filename);
-
-            storageRef.putFile(filePath)
-                    //성공시
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss(); //업로드 진행 Dialog 상자 닫기
-                            Toast.makeText(mContext, "업로드 완료!", Toast.LENGTH_LONG).show();
-                        }
-                    })
-                    //실패시
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(mContext, "업로드 실패!", Toast.LENGTH_LONG).show();
-                        }
-                    })
-                    //진행중
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            @SuppressWarnings("VisibleForTests")
-                            double progress = (100 * taskSnapshot.getBytesTransferred()) /  taskSnapshot.getTotalByteCount();
-                            //dialog에 진행률을 퍼센트로 출력해 준다
-                            progressDialog.setMessage("Uploaded " + ((int) progress) + "% ...");
-                        }
-                    });
-        } else {
-            Toast.makeText(mContext, "선택된 사진 파일이 없습니다.", Toast.LENGTH_LONG).show();
-        }
     }
 
     private static String convertResponseToString(BatchAnnotateImagesResponse response) {
@@ -555,24 +486,15 @@ public class search_fragment extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup viewGroup) {
-            final Context context = viewGroup.getContext();
-
-            final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-            convertView = inflater.inflate(R.layout.singer_item, viewGroup, false);
+            SingerItemView2 view = new SingerItemView2(getApplicationContext());
 
             SingerItem2 item = items.get(position);
-
-            TextView textView1 = convertView.findViewById(R.id.dog_species);
-            textView1.setText(item.getName());
-            TextView textView2 = convertView.findViewById(R.id.dog_location);
-            textView2.setText(item.getLocation());
-            TextView textView3 = convertView.findViewById(R.id.dog_feature);
-            textView3.setText(item.getFeature());
-            ImageView imageView = convertView.findViewById(R.id.imageView);
-            imageView.setImageURI(image_uri.get(position));
-
-            return convertView;
+            view.setName(item.getName());
+            view.setLocation(item.getLocation());
+            view.setFeature(item.getFeature());
+            if(!dog_bitmap.isEmpty())
+                view.setImage(dog_bitmap.remove(0));
+            return view;
         }
     }
 
