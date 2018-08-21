@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -81,7 +80,9 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 public class search_fragment extends Fragment {
     Context mContext;
     Uri filePath;
+    ImageView imageViewUpload;
     View view;
+    EditText editText;
     static ListView listView;
     SingerAdapter adapter;
     ArrayList<String> dog_species;
@@ -92,8 +93,6 @@ public class search_fragment extends Fragment {
     static ArrayList<String> dog_species2;
     static ArrayList<String> dog_location2;
     static ArrayList<String> dog_feature2;
-    static ArrayList<String> dog_uid2;
-    static ArrayList<Uri> dog_bitmap;
 
 
     FirebaseDatabase firebaseDatabase;
@@ -120,6 +119,7 @@ public class search_fragment extends Fragment {
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseDatabaseRef = firebaseDatabase.getReference();
 
+
         // 스토리지 Instance 생성
         firebaseStorage = FirebaseStorage.getInstance();
         firebaseStorageRef = firebaseStorage.getReference();
@@ -134,8 +134,8 @@ public class search_fragment extends Fragment {
         dog_species = new ArrayList<String>();
         dog_location = new ArrayList<String>();
         dog_feature = new ArrayList<String>();
-        dog_uid2 = new ArrayList<String>();
-        dog_bitmap = new ArrayList<Uri>();
+
+
 
         Button search = (Button) view.findViewById(R.id.search_btn);
         search.setOnClickListener(new View.OnClickListener()
@@ -150,6 +150,8 @@ public class search_fragment extends Fragment {
                     intent.setAction(Intent.ACTION_GET_CONTENT);
                     startActivityForResult(Intent.createChooser(intent, "Select a photo"),
                             GALLERY_IMAGE_REQUEST);
+
+
                 }
             }
         });
@@ -171,16 +173,12 @@ public class search_fragment extends Fragment {
                         dog_species.add(temp.child("species").getValue().toString());
                         dog_location.add(temp.child("location").getValue().toString());
                         dog_feature.add(temp.child("feature").getValue().toString());
-                        String uid = temp.child("uid").getValue().toString().split("@")[0];
-                        dog_uid2.add(uid);
-                        readImage();
                     }
-
                 }
-//                for(int i=0;i<dog_species.size();i++) {
-//                    adapter.addItem(new SingerItem2(dog_species.get(i), dog_location.get(i), dog_feature.get(i), R.drawable.img1));
-//                }
-//                listView.setAdapter(adapter);
+                for(int i=0;i<dog_species.size();i++) {
+                    adapter.addItem(new SingerItem2(dog_species.get(i), dog_location.get(i), dog_feature.get(i), R.drawable.img1));
+                }
+                listView.setAdapter(adapter);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -318,9 +316,6 @@ public class search_fragment extends Fragment {
             dog_species2=new ArrayList<String>();
             dog_location2=new ArrayList<String>();
             dog_feature2=new ArrayList<String>();
-            dog_uid2=new ArrayList<>();
-            dog_bitmap = new ArrayList<Uri>();
-
             new_adapter = new SingerAdapter();
 
             if (activity != null && !activity.isFinishing()) {
@@ -344,13 +339,11 @@ public class search_fragment extends Fragment {
                                 dog_species2.add(temp.child("species").getValue().toString());
                                 dog_location2.add(temp.child("location").getValue().toString());
                                 dog_feature2.add(temp.child("feature").getValue().toString());
-                                String uid = temp.child("uid").getValue().toString().split("@")[0];
-                                dog_uid2.add(uid);
                             }
 
                         }
                         for(int i=0;i<dog_species2.size();i++) {
-//                            new_adapter.addItem(new SingerItem2(dog_species2.get(i), dog_location2.get(i), dog_feature2.get(i), R.drawable.img1));
+                            new_adapter.addItem(new SingerItem2(dog_species2.get(i), dog_location2.get(i), dog_feature2.get(i), R.drawable.img1));
                         }
                         listView.setAdapter(new_adapter);
                     }
@@ -371,33 +364,6 @@ public class search_fragment extends Fragment {
                 });
             }
         }
-    }
-
-    public void readImage (){
-        StorageReference storageRef = firebaseStorageRef.child("UID/"+dog_uid2.remove(0)+".jpg");
-
-        storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                // Got the download URL for 'users/me/profile.png'
-                dog_bitmap.add(uri);
-                for(int i=0;i<dog_species.size();i++) {
-                    adapter.addItem(new SingerItem2(dog_species.get(i), dog_location.get(i), dog_feature.get(i), uri));
-                }
-                listView.setAdapter(adapter);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
-                Log.e("TAG", exception.toString());
-            }
-        });
-    }
-
-    public Bitmap byteArrayToBitmap( byte[] $byteArray ) {
-        Bitmap bitmap = BitmapFactory.decodeByteArray( $byteArray, 0, $byteArray.length ) ;
-        return bitmap ;
     }
 
     private void callCloudVision(final Bitmap bitmap) {
@@ -492,8 +458,8 @@ public class search_fragment extends Fragment {
             view.setName(item.getName());
             view.setLocation(item.getLocation());
             view.setFeature(item.getFeature());
-            if(!dog_bitmap.isEmpty())
-                view.setImage(dog_bitmap.remove(0));
+            view.setImage(item.getResId());
+
             return view;
         }
     }

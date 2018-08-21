@@ -1,14 +1,12 @@
 package com.example.minyoung.finding_dog;
 
-import android.net.Uri;
-
 public class SingerItem2 {
     String name;
     String feature;
     String location;
-    Uri resId;
+    int resId;
 
-    public SingerItem2(String name, String location, String feature, Uri resId){
+    public SingerItem2(String name, String location, String feature, int resId){
         this.name = name;
         this.location = location;
         this.feature = feature;
@@ -17,8 +15,8 @@ public class SingerItem2 {
 
     public String getFeature(){return feature;}
     public void setFeature(String feature){this.feature = feature;}
-    public Uri getResId(){return resId;}
-    public void setResId(Uri resId){this.resId = resId;}
+    public int getResId(){return resId;}
+    public void setResId(int resId){this.resId = resId;}
     public String getLocation(){return location;}
     public void setLocation(String location){this.location = location;}
     public String getName(){return name;}
