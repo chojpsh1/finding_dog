@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,14 +59,18 @@ public class ChatArrayAdapter extends ArrayAdapter {
             chatText.setVisibility(View.VISIBLE);
             chatImage.setVisibility(View.GONE);
             chatText.setText(chatMessageObj.message);
+            chatText.setBackgroundResource(chatMessageObj.left ? R.drawable.left_bubble9 : R.drawable.right_bubble_black9);
+            chatText.setTextColor(chatMessageObj.left ? Color.rgb(0x00, 0x00, 0x00) : Color.rgb(0xFF,0xFF,0xFF));
         }
         else{
             chatText.setVisibility(View.GONE);
             chatImage.setVisibility(View.VISIBLE);
             chatImage.setImageBitmap(chatMessageObj.image);
+            chatImage.setBackgroundResource(chatMessageObj.left ? R.drawable.left_bubble9 : R.drawable.right_bubble_black9);
         }
 
         singleMessageContainer.setGravity(chatMessageObj.left ? Gravity.LEFT : Gravity.RIGHT);
+
         return row;
     }
 

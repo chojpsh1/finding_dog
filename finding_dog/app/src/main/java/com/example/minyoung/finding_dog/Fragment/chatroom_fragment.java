@@ -1,12 +1,9 @@
 package com.example.minyoung.finding_dog.Fragment;
 
-import android.Manifest;
 import android.app.Fragment;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
@@ -17,18 +14,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,9 +45,6 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -94,6 +86,8 @@ public class chatroom_fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chatroom, container, false);
 
+        setHasOptionsMenu(true);
+
         listView = (ListView) view.findViewById(R.id.msg_container);
         chatText = (EditText) view.findViewById(R.id.chat_content);
 
@@ -105,7 +99,7 @@ public class chatroom_fragment extends Fragment {
 
         chatImg = view.findViewById(R.id.chat_img);
 
-        textView = (TextView) view.findViewById(R.id.check);
+        textView = (TextView) view.findViewById(R.id.chat_partner);
         myID = getArguments().getString("myID");
         yourID = getArguments().getString("yourID");
 
@@ -184,7 +178,7 @@ public class chatroom_fragment extends Fragment {
         buttonSendPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                sendChatPicture();
+                sendChatImage();
             }
         });
 
@@ -226,6 +220,17 @@ public class chatroom_fragment extends Fragment {
         return view;
     }
 
+    //액션버튼을 클릭했을때의 동작
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -288,13 +293,11 @@ public class chatroom_fragment extends Fragment {
         return true;
     }
 
-    private boolean sendChatPicture(){
+    private boolean sendChatImage(){
         Drawable d = chatImg.getDrawable();
         Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
 
         chatArrayAdapter.add(new ChatMessage(false, bitmap));
-
-
 
         //Unique한 파일명을 만들자.
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMHH_mmss");
@@ -308,7 +311,6 @@ public class chatroom_fragment extends Fragment {
         final ProgressDialog progressDialog = new ProgressDialog(mContext);
         progressDialog.setTitle("전송중...");
         progressDialog.show();
-
 
         storageRef.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -336,8 +338,6 @@ public class chatroom_fragment extends Fragment {
                         progressDialog.setMessage("전송중 " + ((int) progress) + "% ...");
                     }
                 });
-
-
 
         mDbOpenHelper.open();
         mDbOpenHelper.insertColumn(yourID, 0, 0, "picture", "", bitmap);
