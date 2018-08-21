@@ -174,10 +174,9 @@ public class search_fragment extends Fragment {
                         dog_location.add(temp.child("location").getValue().toString());
                         dog_feature.add(temp.child("feature").getValue().toString());
                     }
-
                 }
-                for(int i=0;i<dog_species.size();i++) {
-                    adapter.addItem(new SingerItem2(dog_species.get(i), dog_location.get(i), dog_feature.get(i), R.drawable.img1));
+                for(int i = 0; i < dog_species.size(); i++) {
+                    adapter.addItem(new SingerItem2(dog_species.get(i), dog_location.get(i), dog_feature.get(i), i + 2131230871));
                 }
                 listView.setAdapter(adapter);
             }
@@ -343,8 +342,8 @@ public class search_fragment extends Fragment {
                             }
 
                         }
-                        for(int i=0;i<dog_species2.size();i++) {
-                            new_adapter.addItem(new SingerItem2(dog_species2.get(i), dog_location2.get(i), dog_feature2.get(i), R.drawable.img1));
+                        for(int i = 0; i < dog_species2.size(); i++) {
+                            new_adapter.addItem(new SingerItem2(dog_species2.get(i), dog_location2.get(i), dog_feature2.get(i), i + 2131230871));
                         }
                         listView.setAdapter(new_adapter);
                     }
@@ -399,54 +398,6 @@ public class search_fragment extends Fragment {
             resizedWidth = maxDimension;
         }
         return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
-    }
-
-    //upload the file
-    private void uploadFile() {
-        //업로드할 파일이 있으면 수행
-        if (filePath != null) {
-            //업로드 진행 Dialog 보이기
-            final ProgressDialog progressDialog = new ProgressDialog(mContext);
-            progressDialog.setTitle("업로드중...");
-            progressDialog.show();
-
-            //Unique한 파일명을 만들자.
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMHH_mmss");
-            Date now = new Date();
-            String filename = formatter.format(now) + ".jpg";
-            //storage 주소와 폴더 파일명을 지정해 준다.
-            StorageReference storageRef = firebaseStorage.getReferenceFromUrl("gs://chatting-ed067.appspot.com").child("UID").child(filename);
-
-            storageRef.putFile(filePath)
-                    //성공시
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss(); //업로드 진행 Dialog 상자 닫기
-                            Toast.makeText(mContext, "업로드 완료!", Toast.LENGTH_LONG).show();
-                        }
-                    })
-                    //실패시
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(mContext, "업로드 실패!", Toast.LENGTH_LONG).show();
-                        }
-                    })
-                    //진행중
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            @SuppressWarnings("VisibleForTests")
-                            double progress = (100 * taskSnapshot.getBytesTransferred()) /  taskSnapshot.getTotalByteCount();
-                            //dialog에 진행률을 퍼센트로 출력해 준다
-                            progressDialog.setMessage("Uploaded " + ((int) progress) + "% ...");
-                        }
-                    });
-        } else {
-            Toast.makeText(mContext, "선택된 사진 파일이 없습니다.", Toast.LENGTH_LONG).show();
-        }
     }
 
     private static String convertResponseToString(BatchAnnotateImagesResponse response) {

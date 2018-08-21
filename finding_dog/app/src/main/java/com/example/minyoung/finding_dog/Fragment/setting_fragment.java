@@ -65,9 +65,7 @@ public class setting_fragment extends Fragment{
         });
 
         DatabaseReference database2 = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference mConditionRef2=database2.child("Current_user");
 
-//        DatabaseReference usersRef = ref.child("users");
         databaseReference = FirebaseDatabase.getInstance().getReference();
         //스위치의 체크 이벤트를 위한 리스너 등록
         sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -122,6 +120,4 @@ public class setting_fragment extends Fragment{
     private void finish() {
         finish();
     }
-
-
 }
