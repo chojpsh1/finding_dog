@@ -19,6 +19,9 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class SignupActivity extends AppCompatActivity{
     final String TAG = "SignupActivity";
     String user_email[];
@@ -30,6 +33,12 @@ public class SignupActivity extends AppCompatActivity{
     private EditText editTextName;
     private EditText editTextPassword;
     private Button buttonSignUp;
+
+    //String current_uid;
+    private FirebaseUser user;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference firebaseDatabaseRef;
+
 
 
     @Override
@@ -63,9 +72,26 @@ public class SignupActivity extends AppCompatActivity{
                             // Sign in success, update UI with the signed-in user's information
                             Toast.makeText(mContext, "Authentication successed.",
                                     Toast.LENGTH_SHORT).show();
-                            user_email=email.split("@");
-                            databaseReference = FirebaseDatabase.getInstance().getReference("User");
-                            databaseReference.child(user_email[0]).child("uid").setValue(email);
+
+
+                            // 데이터베이스 Instance 생성
+                            firebaseDatabase = FirebaseDatabase.getInstance();
+                            firebaseDatabaseRef = firebaseDatabase.getReference();
+                            // 로그인 계정정보
+                            mAuth = FirebaseAuth.getInstance();
+                            user = mAuth.getCurrentUser();
+                            Map<String, Object> childUpdates = new HashMap<>();
+                            final String current_uid = user.getEmail().split("@")[0];
+
+
+                            childUpdates.put("/User/" +current_uid+"/species", "");
+                            childUpdates.put("/User/"+current_uid+"/location", "");
+                            childUpdates.put("/User/"+current_uid+"/feature", "");
+                            childUpdates.put("/User/"+current_uid+"/LoseState", "False");
+                            childUpdates.put("/User/"+current_uid+"/uid", email);
+
+                            firebaseDatabaseRef.updateChildren(childUpdates);
+
                             finish();
                         } else {
                             // If sign in fails, display a message to the user.
