@@ -152,8 +152,6 @@ public class search_fragment extends Fragment {
                     intent.setAction(Intent.ACTION_GET_CONTENT);
                     startActivityForResult(Intent.createChooser(intent, "Select a photo"),
                             GALLERY_IMAGE_REQUEST);
-
-
                 }
             }
         });
@@ -188,9 +186,7 @@ public class search_fragment extends Fragment {
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
-
         });
-
         return view;
     }
 
@@ -212,9 +208,7 @@ public class search_fragment extends Fragment {
                         scaleBitmapDown(
                                 MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), uri),
                                 MAX_DIMENSION);
-
                 callCloudVision(bitmap);
-
             } catch (IOException e) {
                 Log.d(TAG, "Image picking failed because " + e.getMessage());
                 Toast.makeText(mContext, R.string.image_picker_error, Toast.LENGTH_LONG).show();
@@ -306,7 +300,6 @@ public class search_fragment extends Fragment {
                 Log.d(TAG, "created Cloud Vision request object, sending request");
                 BatchAnnotateImagesResponse response = mRequest.execute();
                 return convertResponseToString(response);
-
             } catch (GoogleJsonResponseException e) {
                 Log.d(TAG, "failed to make API request because " + e.getContent());
             } catch (IOException e) {
@@ -492,7 +485,6 @@ public class search_fragment extends Fragment {
     public void switchFragment(String id) {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
-
         Fragment chatroom = new chatroom_fragment();
 
         FirebaseAuth mAuth;
@@ -507,7 +499,6 @@ public class search_fragment extends Fragment {
         chatroom.setArguments(bundle);
 
         fragmentTransaction.replace(R.id.mainactivity_framelayout, chatroom);
-
         fragmentTransaction.commit();
     }
 }
