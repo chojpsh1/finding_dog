@@ -38,9 +38,9 @@ public class SingerItemView2 extends LinearLayout {
         imageView = (ImageView) findViewById(R.id.imageView);
     }
 
-    public void setName(String name) { textView.setText(name); }
-    public void setLocation(String location) { textView2.setText(location); }
-    public void setFeature(String feature) { textView3.setText(feature); }
+    public void setName(String name) { textView.setText("종 : "+name); }
+    public void setLocation(String location) { textView2.setText("지역 : "+location); }
+    public void setFeature(String feature) { textView3.setText("특징 : "+feature); }
     public void setImage(int resId) { imageView.setImageResource(resId); }
 
 }
