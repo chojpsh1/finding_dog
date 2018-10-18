@@ -68,10 +68,6 @@ public class LoginActivity extends AppCompatActivity {
     private CallbackManager callbackManager;
     private com.facebook.login.widget.LoginButton btn_facebook_login;
 
-    //카카오톡 로그인을 위한 변수
-//    private Button btn_custom_login;
-    private com.kakao.usermgmt.LoginButton btn_kakao;
-    private SessionCallback callback;
 
     private FirebaseAuth mAuth;
 
@@ -89,17 +85,7 @@ public class LoginActivity extends AppCompatActivity {
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
             getWindow().setStatusBarColor(Color.parseColor(splash_background));
         }
-        //카카오톡 연동
-        callback = new SessionCallback(); //세션콜백을 부르고
-        Session.getCurrentSession().addCallback(callback); // 추가시키면 끝입니다!!
-        btn_kakao =(com.kakao.usermgmt.LoginButton)findViewById(R.id.btn_kakao_login);
-//        btn_custom_login.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                btn_kakao_login.performClick();
-//            }
-//        });
-//        btn_kakao_login = (com.kakao.usermgmt.LoginButton) findViewById(R.id.btn_kakao_login);
+
 
         firebaseAuth = firebaseAuth.getInstance();
 
@@ -184,7 +170,7 @@ public class LoginActivity extends AppCompatActivity {
                             databaseReference2 = FirebaseDatabase.getInstance().getReference("Current_user");
                             databaseReference2.child(user_email[0]).child("uid").setValue(facebook_email);
 
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            Intent intent = new Intent(LoginActivity.this, FirstActivity.class);
                             startActivity(intent);
                         }catch (Exception e){
                         }
@@ -222,7 +208,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Toast.makeText(LoginActivity.this, "로그인 성공",
                                         Toast.LENGTH_SHORT).show();
 
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                Intent intent = new Intent(LoginActivity.this, FirstActivity.class);
                                 startActivity(intent);
                                 finish();
                             } else {
@@ -242,57 +228,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
-    //카카오톡 로그인 연동
-    private class SessionCallback implements ISessionCallback {
-        @Override
-        public void onSessionOpened() {
-            UserManagement.getInstance().requestMe(new MeResponseCallback() {
-                @Override
-                public void onFailure(ErrorResult errorResult) {
-                    String message = "failed to get user info. msg=" + errorResult;
-                    Logger.d(message);
 
-                    ErrorCode result = ErrorCode.valueOf(errorResult.getErrorCode());
-                    if (result == ErrorCode.CLIENT_ERROR_CODE) {
-                        finish();
-                    } else {
-                        //redirectMainActivity();
-                    }
-                }
-
-                @Override
-                public void onSessionClosed(ErrorResult errorResult) {
-                }
-
-                @Override
-                public void onNotSignedUp() {
-                }
-                @Override
-                public void onSuccess(UserProfile userProfile) {
-                    //로그인에 성공하면 로그인한 사용자의 일련번호, 닉네임, 이미지url등을 리턴합니다.
-                    //사용자 ID는 보안상의 문제로 제공하지 않고 일련번호는 제공합니다.
-                    Log.e("UserProfile", userProfile.toString());
-                    String kakao_email = userProfile.getEmail();
-                    user_email=kakao_email.split("@");
-                    databaseReference = FirebaseDatabase.getInstance().getReference("User");
-                    databaseReference.child(user_email[0]).child("uid").setValue(kakao_email);
-
-                    databaseReference2 = FirebaseDatabase.getInstance().getReference("Current_user");
-                    databaseReference2.setValue(null);
-                    databaseReference2.child(user_email[0]).child("uid").setValue(user_email);
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                    intent.putExtra("uid", kakao_email);
-                    startActivity(intent);
-                    finish();
-                }
-            });
-
-        }
-        @Override
-        public void onSessionOpenFailed(KakaoException exception) {
-            // 세션 연결이 실패했을때
-            // 어쩔때 실패되는지는 테스트를 안해보았음 ㅜㅜ
-        }
-    }
 
 }

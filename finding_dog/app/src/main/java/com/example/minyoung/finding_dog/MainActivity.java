@@ -26,13 +26,33 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
-        getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,new register_fragment()).commit();
-//        Intent intent = getIntent();
-//        String uid = intent.getExtras().getString("uid");
+
         Log.e("TAG", mAuth.getUid());
         Log.e("TAG", user.getEmail());
 
         FirebaseUser a = mAuth.getCurrentUser();
+
+        //처음 화면
+        Intent intent = getIntent();
+        String next = intent.getExtras().getString("next");
+        if(next.equals("search_fragment")){
+            getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,new search_fragment()).commit();
+        }
+        else if(next.equals("shopping_fragment")){
+            getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,new shop_fragment()).commit();
+        }
+        else if(next.equals("chatting_fragment")){
+            getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,new chatting_fragment()).commit();
+        }
+        else if(next.equals("setting_fragment")){
+            getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,new setting_fragment()).commit();
+        }
+        else if(next.equals("register_fragment")){
+            getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,new register_fragment()).commit();
+        }
+
+
+
         BottomNavigationView bottomNavigationView=(BottomNavigationView)findViewById(R.id.mainactivity_bottomnavigationview);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener(){
             @Override
