@@ -94,7 +94,7 @@ public class search_fragment extends Fragment {
     private static final int GALLERY_PERMISSIONS_REQUEST = 0;
     private static final int GALLERY_IMAGE_REQUEST = 1;
     private static final int MAX_DIMENSION = 1200;
-    private static final String CLOUD_VISION_API_KEY = "AIzaSyD_NGKmBcL37cg9ivSMUt0BWN8LiZb-n5A";
+    private static final String CLOUD_VISION_API_KEY = "";
     private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
     private static final String ANDROID_CERT_HEADER = "X-Android-Cert";
     private static final int MAX_LABEL_RESULTS = 5;
