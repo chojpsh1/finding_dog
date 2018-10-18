@@ -416,7 +416,7 @@ public class register_fragment extends Fragment {
                     case "close up":
                         break;
                     default:
-                        message.append(String.format(Locale.US, "%s", label.getDescription()));
+                        message.append(String.format(Locale.US, "%s", label.getDescription() + ","));
                 }
             }
         } else {
