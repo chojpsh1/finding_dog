@@ -70,10 +70,6 @@ import static android.app.Activity.RESULT_OK;
 import static com.facebook.FacebookSdk.getApplicationContext;
 import static junit.framework.Assert.assertEquals;
 
-/**
- * Created by minyoung on 2018-06-28.
- */
-
 public class register_fragment extends Fragment {
     Context mContext;
     EditText editTextSpecies;
@@ -179,7 +175,7 @@ public class register_fragment extends Fragment {
         childUpdates.put("/User/" +current_uid+"/species", species);
         childUpdates.put("/User/"+current_uid+"/location", location);
         childUpdates.put("/User/"+current_uid+"/feature", feature);
-//        childUpdates.put("/User/"+current_uid+"/LoseState", "False");
+        childUpdates.put("/User/"+current_uid+"/LoseState", "False");
 
         firebaseDatabaseRef.updateChildren(childUpdates);
         Toast.makeText(mContext,"저장 완료",Toast.LENGTH_LONG).show();
@@ -194,7 +190,7 @@ public class register_fragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //request코드가 0이고 OK를 선택했고 data에 뭔가가 들어 있다면
+        // request코드가 0이고 OK를 선택했고 data에 뭔가가 들어 있다면
         if(requestCode == GALLERY_IMAGE_REQUEST && resultCode == RESULT_OK && data != null){
             uploadImage(data.getData());
         }
@@ -421,7 +417,6 @@ public class register_fragment extends Fragment {
                         break;
                     default:
                         message.append(String.format(Locale.US, "%s", label.getDescription()));
-//                        message.append(" / ");
                 }
             }
         } else {
