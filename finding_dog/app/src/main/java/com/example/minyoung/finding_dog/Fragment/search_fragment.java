@@ -331,7 +331,7 @@ public class search_fragment extends Fragment {
                             String state=temp.child("LoseState").getValue().toString();
                             boolean got = key.contains(result);
 
-                            // 같은 품종의 temp값만 list에 저장
+                            // 같은 품종의 temp값만 list에 저장필요
                             if(got&&state.equals("True")){
                                 dog_species2.add(temp.child("species").getValue().toString());
                                 dog_location2.add(temp.child("location").getValue().toString());
