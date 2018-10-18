@@ -76,49 +76,49 @@
             android:id="@+id/editTextFeature"/>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center">
+        >
+
+        <ImageView
+            android:id="@+id/imageViewUpload"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/noimage" />
 
         <Button
-            android:background="#000000"
-            android:textColor="#FFFFFF"
-            android:id="@+id/buttonSaveDog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="강아지 정보 저장" />
+            android:id="@+id/buttonChoose"
+            android:layout_width="170dp"
+            android:layout_height="35dp"
+            android:layout_alignBottom="@+id/imageViewUpload"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity=""
+            android:background="@drawable/select_background"
+            android:gravity="center"
+            android:text="강아지 사진 선택"
+            android:textColor="#FFFFFF" />
 
-        <LinearLayout
-            android:layout_marginTop="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="center">
-            <Button
-                android:background="#000000"
-                android:textColor="#FFFFFF"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/buttonChoose"
-                android:text="강아지 사진 선택" />
+    </RelativeLayout>
+    <Button
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:id="@+id/buttonSaveDog"
+        android:layout_width="170dp"
+        android:layout_height="35dp"
+        android:background="@drawable/save_background"
+        android:text="강아지 정보 저장"
+        android:textColor="#FFFFFF" />
+    <Button
+        android:id="@+id/buttonUpload"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/save_background"
+        android:text="강아지 사진 저장"
+        android:textColor="#FFFFFF" />
 
-            <Button
-                android:layout_marginLeft="10dp"
-                android:background="#000000"
-                android:textColor="#FFFFFF"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/buttonUpload"
-                android:text="강아지 사진 저장"/>
-        </LinearLayout>
-    </LinearLayout>
-
-    <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/imageViewUpload"
-            android:background="@drawable/noimage"/>
 
 </LinearLayout>

@@ -14,12 +14,13 @@
         android:layout_above="@+id/mainactivity_bottomnavigationview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"></FrameLayout>
+
     <android.support.design.widget.BottomNavigationView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/mainactivity_bottomnavigationview"
         android:layout_alignParentBottom="true"
-        app:itemBackground="@color/common_google_signin_btn_text_dark_focused"
+        app:itemBackground="@drawable/background3"
         app:itemTextColor="@android:color/white"
         app:itemIconTint="@android:color/white"
         app:menu="@menu/bottom_navigation_main"
