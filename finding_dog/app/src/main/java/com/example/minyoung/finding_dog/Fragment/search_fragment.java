@@ -28,6 +28,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.minyoung.finding_dog.LoginActivity;
 import com.example.minyoung.finding_dog.MainActivity;
 import com.example.minyoung.finding_dog.R;
@@ -173,15 +175,24 @@ public class search_fragment extends Fragment {
                         dog_species.add(temp.child("species").getValue().toString());
                         dog_location.add(temp.child("location").getValue().toString());
                         dog_feature.add(temp.child("feature").getValue().toString());
-                        temp.child("uid").getValue().toString();
                         dog_uid.add(temp.child("uid").getValue().toString());
                     }
                 }
                 /*Hard Coding*/
                 for(int i = 0; i < dog_species.size(); i++) {
-                    adapter.addItem(new SingerItem2(dog_species.get(i), dog_location.get(i), dog_feature.get(i), i + 2131230871, dog_uid.get(i)));
+                    final int j = i;
+                    String a = dog_uid.get(i).split("@")[0];
+                    final Uri[] tempUri = {null};
+                    firebaseStorageRef.child("UID").child(a+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            tempUri[0] = uri;
+                            adapter.addItem(new SingerItem2(dog_species.get(j), dog_location.get(j), dog_feature.get(j), tempUri[0], dog_uid.get(j)));
+                            listView.setAdapter(adapter);
+                        }
+                    });
                 }
-                listView.setAdapter(adapter);
+
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -195,7 +206,7 @@ public class search_fragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //request코드가 0이고 OK를 선택했고 data에 뭔가가 들어 있다면
-        if(requestCode == GALLERY_IMAGE_REQUEST && resultCode == RESULT_OK && data != null){
+        if (requestCode == GALLERY_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             uploadImage(data.getData());
         }
     }
@@ -344,20 +355,20 @@ public class search_fragment extends Fragment {
 
                         }
                         /*Hard Coding*/
-                        int temp = 2131230873;
-                        for(int i = 0; i < dog_species2.size(); i++) {
-//                            Log.e("images",String.valueOf(R.drawable.dog11));
-//                            Log.e("images",String.valueOf(R.drawable.dog12));
-//                            Log.e("images",String.valueOf(R.drawable.dog13));
-//                            Log.e("images",String.valueOf(R.drawable.dog14));
-//                            Log.e("images",String.valueOf(R.drawable.dog15));
-//                            Log.e("images",String.valueOf(R.drawable.dog16));
-                            /*Hard Coding*/
-                            new_adapter.addItem(new SingerItem2(dog_species2.get(i), dog_location2.get(i), dog_feature2.get(i), temp, dog_uid2.get(i)));
-                            /*Hard Coding*/
-                            temp += 2;
+                        for(int i = 0; i < dog_species.size(); i++) {
+                            final int j = i;
+                            String a = dog_uid.get(i).split("@")[0];
+                            final Uri[] tempUri = {null};
+                            firebaseStorageRef.child("UID").child(a+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    tempUri[0] = uri;
+                                    adapter.addItem(new SingerItem2(dog_species.get(j), dog_location.get(j), dog_feature.get(j), tempUri[0], dog_uid.get(j)));
+                                    listView.setAdapter(adapter);
+                                }
+                            });
                         }
-                        listView.setAdapter(new_adapter);
+
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
@@ -470,7 +481,8 @@ public class search_fragment extends Fragment {
             view.setName(item.getName());
             view.setLocation(item.getLocation());
             view.setFeature(item.getFeature());
-            view.setImage(item.getResId());
+            ImageView imgv = view.findViewById(R.id.imageView);
+            Glide.with(mContext).load(item.getUri()).into(imgv);
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
