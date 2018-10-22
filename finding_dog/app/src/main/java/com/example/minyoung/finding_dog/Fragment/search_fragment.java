@@ -65,10 +65,6 @@ import java.util.Locale;
 import static android.app.Activity.RESULT_OK;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
-/**
- * Created by minyoung on 2018-06-28.
- */
-
 public class search_fragment extends Fragment {
     Context mContext;
     View view;
