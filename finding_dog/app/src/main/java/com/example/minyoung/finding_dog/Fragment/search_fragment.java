@@ -79,12 +79,6 @@ public class search_fragment extends Fragment {
     ArrayList<String> dog_feature;
     ArrayList<String> dog_uid;
 
-    static SingerAdapter new_adapter;
-    static ArrayList<String> dog_species2;
-    static ArrayList<String> dog_location2;
-    static ArrayList<String> dog_feature2;
-    static ArrayList<String> dog_uid2;
-
     FirebaseDatabase firebaseDatabase;
     DatabaseReference firebaseDatabaseRef;
 
@@ -306,12 +300,11 @@ public class search_fragment extends Fragment {
 
         protected void onPostExecute(final String result) {
             MainActivity activity = mActivityWeakReference.get();
-            dog_species2=new ArrayList<String>();
-            dog_location2=new ArrayList<String>();
-            dog_feature2=new ArrayList<String>();
-            dog_uid2 = new ArrayList<String>();
-
-            new_adapter = new SingerAdapter();
+            dog_species = new ArrayList<String>();
+            dog_location = new ArrayList<String>();
+            dog_feature = new ArrayList<String>();
+            dog_uid = new ArrayList<String>();
+            adapter = new SingerAdapter();
 
             if (activity != null && !activity.isFinishing()) {
                 TextView imageDetail = activity.findViewById(R.id.species);
@@ -326,17 +319,17 @@ public class search_fragment extends Fragment {
                         Iterator<DataSnapshot> child = dataSnapshot.getChildren().iterator();
 
                         while(child.hasNext()) {
-                            DataSnapshot temp=child.next();
+                            DataSnapshot temp = child.next();
                             String key=temp.child("species").getValue().toString();
                             String state=temp.child("LoseState").getValue().toString();
-                            boolean got = key.contains(result);
+                            boolean got = key.equals(result.split(",")[0]);
 
                             // 같은 품종의 temp값만 list에 저장필요
-                            if(got&&state.equals("True")){
-                                dog_species2.add(temp.child("species").getValue().toString());
-                                dog_location2.add(temp.child("location").getValue().toString());
-                                dog_feature2.add(temp.child("feature").getValue().toString());
-                                dog_uid2.add(temp.child("uid").getValue().toString());
+                            if(got && state.equals("True")){
+                                dog_species.add(temp.child("species").getValue().toString());
+                                dog_location.add(temp.child("location").getValue().toString());
+                                dog_feature.add(temp.child("feature").getValue().toString());
+                                dog_uid.add(temp.child("uid").getValue().toString());
                             }
 
                         }
@@ -358,12 +351,12 @@ public class search_fragment extends Fragment {
                     }
 
                 });
-                imageDetail.setText(result);
+                imageDetail.setText(result.split(",")[0]);
                 //*********리스트 선택 했을 때 채팅 연결하기*********//
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                        SingerItem2 item = (SingerItem2) new_adapter.getItem(position);
+                        SingerItem2 item = (SingerItem2) adapter.getItem(position);
 
                         Toast.makeText(getApplicationContext(),"선택 : "+item.getName(), Toast.LENGTH_LONG).show();
                     }
@@ -423,7 +416,7 @@ public class search_fragment extends Fragment {
                     case "close up":
                         break;
                     default:
-                        message.append(String.format(Locale.US, "%s", label.getDescription()));
+                        message.append(String.format(Locale.US, "%s", label.getDescription() + ","));
                 }
             }
         } else {

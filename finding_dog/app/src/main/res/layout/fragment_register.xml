@@ -78,8 +78,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/imageViewUpload"
@@ -111,14 +110,5 @@
         android:background="@drawable/save_background"
         android:text="강아지 정보 저장"
         android:textColor="#FFFFFF" />
-    <Button
-        android:id="@+id/buttonUpload"
-        android:layout_width="100dp"
-        android:layout_height="35dp"
-        android:layout_marginLeft="10dp"
-        android:background="@drawable/save_background"
-        android:text="강아지 사진 저장"
-        android:textColor="#FFFFFF" />
-
 
 </LinearLayout>

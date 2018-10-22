@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,11 +43,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -57,18 +53,13 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
-import static com.facebook.FacebookSdk.getApplicationContext;
-import static junit.framework.Assert.assertEquals;
 
 public class register_fragment extends Fragment {
     Context mContext;
@@ -77,7 +68,6 @@ public class register_fragment extends Fragment {
     EditText editTextFeature;
     Button buttonSaveDog;
     Button buttonChoose;
-    Button buttonUpload;
     Uri filePath;
     ImageView imageViewUpload;
     FirebaseDatabase firebaseDatabase;
@@ -131,7 +121,6 @@ public class register_fragment extends Fragment {
         //Button 생성
         buttonSaveDog = view.findViewById(R.id.buttonSaveDog);
         buttonChoose = view.findViewById(R.id.buttonChoose);
-        buttonUpload = view.findViewById(R.id.buttonUpload);
 
         imageViewUpload = view.findViewById(R.id.imageViewUpload);
         //Button 클릭 기능 생성
@@ -139,6 +128,7 @@ public class register_fragment extends Fragment {
             @Override
             public void onClick(View v) {
                 saveDog();
+                uploadFile();
             }
         });
         buttonChoose.setOnClickListener(new View.OnClickListener() {
@@ -152,12 +142,6 @@ public class register_fragment extends Fragment {
                     startActivityForResult(Intent.createChooser(intent, "Select a photo"),
                             GALLERY_IMAGE_REQUEST);
                 }
-            }
-        });
-        buttonUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                uploadFile();
             }
         });
         return view;
@@ -313,7 +297,7 @@ public class register_fragment extends Fragment {
             MainActivity activity = mActivityWeakReference.get();
             if (activity != null && !activity.isFinishing()) {
                 TextView imageDetail = activity.findViewById(R.id.editTextSpecies);
-                imageDetail.setText(result);
+                imageDetail.setText(result.split(",")[0]);
             }
         }
     }
