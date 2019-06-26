@@ -1,5 +1,5 @@
 # finding_dog
- This project may help pet feeders. It helps feeders register their pet easily and get back their pet if he(she) lose his pet with Google Cloud API.
+ This project may help pet feeders. It helps feeders register their pet easily and get back their pet if he(she) lose his pet with API.
 
 ## Project Structure
 This project has two applications. One is web application and the other is android application.
