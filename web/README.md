@@ -25,7 +25,7 @@ sudo apt install libapache2-mod-php7.0
 sudo a2enmod php7.0
 sudo systemctl restart apache2.service </pre>
 
-##### Create Naver Clova Face Recognition API
+##### Create Naver Clova Face Recognition API key
 
 > Follow the Naver Clova API documentations. (https://developers.naver.com/docs/clova/api/CFR/API_Guide.md#UsingAPI)
 
