@@ -11,3 +11,5 @@ This project has two applications. One is web application and the other is andro
 
 ##### finding_dog
 > This directory is finding dog project's android applications.
+
+>If you need more informations aoubt it, 'finding_dog/README.md' may help you.
